@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>生日快乐 ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'HMingTiJ';
+            src: url('https://cdn.jsdelivr.net/gh/udxjk/HMingTiJ@main/HMingTiJ-Regular.woff2') format('woff2'),
+                 url('https://cdn.jsdelivr.net/gh/udxjk/HMingTiJ@main/HMingTiJ-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(180deg,
+                    #87CEEB 0%,
+                    #B0E0E6 20%,
+                    #E0FFFF 40%,
+                    #F0F8FF 50%,
+                    #F5F5DC 60%,
+                    #F5DEB3 75%,
+                    #DEB887 100%
+                );
+            font-family: 'Noto Serif SC', serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* 波浪动画 */
+        .waves {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C300,100 600,20 900,60 C1200,100 1500,20 1800,60 L1800,120 L0,120 Z' fill='%2387CEEB' fill-opacity='0.3'/%3E%3C/svg%3E") repeat-x;
+            background-size: 50% 100%;
+            animation: wave 8s linear infinite;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.6;
+            animation-duration: 12s;
+            animation-direction: reverse;
+        }
+
+        .wave:nth-child(3) {
+            bottom: 20px;
+            opacity: 0.4;
+            animation-duration: 15s;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 沙滩纹理 */
+        .beach {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(180deg, #F5DEB3 0%, #DEB887 100%);
+            z-index: 0;
+        }
+
+        .beach::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse 8px 4px at 10% 30%, #D2B48C 70%, transparent 71%),
+                radial-gradient(ellipse 6px 3px at 30% 50%, #C4A57B 70%, transparent 71%),
+                radial-gradient(ellipse 10px 5px at 50% 20%, #D2B48C 70%, transparent 71%),
+                radial-gradient(ellipse 7px 4px at 70% 60%, #C4A57B 70%, transparent 71%),
+                radial-gradient(ellipse 9px 4px at 90% 40%, #D2B48C 70%, transparent 71%);
+        }
+
+        /* 海边光斑 */
+        .light-shimmers {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shimmer {
+            position: absolute;
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent);
+            border-radius: 50%;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.2; transform: translateY(0); }
+            50% { opacity: 0.8; transform: translateY(10px); }
+        }
+
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 98;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0;
+            z-index: 98;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .shell {
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0;
+            z-index: 5;
+            filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.2));
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            perspective: 1500px;
+            touch-action: manipulation;
+        }
+
+        .postcard {
+            position: relative;
+            width: min(520px, 90vw);
+            aspect-ratio: 4 / 3;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            /* 从海浪中浮出的动画 */
+            transform: translateY(100vh) rotate(-8deg);
+            opacity: 0;
+        }
+
+        .postcard.arrived {
+            transform: translateY(0) rotate(2deg);
+            opacity: 1;
+            transition: transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
+        }
+
+        .postcard.arrived.no-wobble {
+            transform: translateY(0) rotate(0deg);
+            transition: transform 0.5s ease, opacity 1s ease;
+        }
+
+        .postcard.flipped {
+            transform: translateY(0) rotateY(180deg);
+        }
+
+        .postcard.flipped.no-wobble {
+            transform: translateY(0) rotateY(180deg) rotate(0deg);
+        }
+
+        .postcard-front, .postcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        /* 信封/信件阴影效果 */
+        .postcard-front, .postcard-back {
+            box-shadow:
+                0 4px 8px rgba(0,0,0,0.1),
+                0 8px 16px rgba(0,0,0,0.1),
+                0 16px 32px rgba(0,0,0,0.08),
+                0 32px 64px rgba(0,0,0,0.05);
+        }
+
+        .postcard-front {
+            background: #fff;
+        }
+
+        .postcard-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 信封边缘装饰 */
+        .postcard-front::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 1px solid rgba(70, 130, 180, 0.3);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .postcard-front-hint {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            color: #4682B4;
+            font-family: 'Noto Serif SC', serif;
+            animation: bounce 2s ease-in-out infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(70, 130, 180, 0.2);
+        }
+
+        .postcard.arrived .postcard-front-hint {
+            opacity: 1;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .postcard-back {
+            background: linear-gradient(145deg, #FDFEFE 0%, #F0F8FF 50%, #E6F3FF 100%);
+            transform: rotateY(180deg);
+            padding: 35px 30px 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 信纸纹理 */
+        .postcard-back::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 信件边框 */
+        .postcard-back-frame {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid rgba(70, 130, 180, 0.3);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+
+        .postcard-back-frame::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid rgba(70, 130, 180, 0.15);
+            border-radius: 2px;
+        }
+
+        /* 邮票/海星装饰 */
+        .stamp-decoration {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 55px;
+            height: 70px;
+            border: 3px solid rgba(70, 130, 180, 0.35);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            transform: rotate(8deg);
+            background: linear-gradient(135deg, rgba(240, 248, 255, 0.6), rgba(230, 243, 255, 0.4));
+            z-index: 1;
+        }
+
+        /* 分割线 */
+        .divider {
+            position: absolute;
+            left: 25px;
+            top: 75px;
+            width: 2px;
+            height: calc(100% - 95px);
+            background: linear-gradient(180deg, transparent, rgba(70, 130, 180, 0.4) 10%, rgba(70, 130, 180, 0.4) 90%, transparent);
+        }
+
+        .to-label {
+            position: relative;
+            z-index: 2;
+            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-size: 1.1rem;
+            color: #4682B4;
+            opacity: 0;
+            margin-bottom: 10px;
+            padding-left: 8px;
+        }
+
+        .letter-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 12px;
+        }
+
+        .letter-title {
+            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-size: 2rem;
+            color: #4682B4;
+            opacity: 0;
+            letter-spacing: 0.15em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .letter-text {
+            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-size: clamp(0.9rem, 2.6vw, 1.15rem);
+            color: #2F4F4F;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .letter-text .line {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .letter-title span, .letter-text .line span, .letter-date span {
+            opacity: 0;
+            display: inline-block;
+        }
+
+        .letter-title span.show, .letter-text .line span.show, .letter-date span.show {
+            opacity: 1;
+            animation: writeIn 0.4s ease forwards;
+        }
+
+        @keyframes writeIn {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .letter-date {
+            position: relative;
+            z-index: 2;
+            text-align: right;
+            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-size: 1rem;
+            color: #5F9EA0;
+            opacity: 0;
+            margin-top: 15px;
+            padding-right: 8px;
+        }
+
+        .ink-trail {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .ink-dot {
+            width: 5px;
+            height: 5px;
+            background: rgba(70, 130, 180, 0.5);
+            border-radius: 50%;
+            animation: inkPulse 2s ease-in-out infinite;
+        }
+
+        .ink-dot:nth-child(2) { animation-delay: 0.3s; }
+        .ink-dot:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes inkPulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.4); }
+        }
+
+        .hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.9rem;
+            color: #4682B4;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 50;
+            text-align: center;
+            padding: 0 20px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .hint.show { opacity: 1; }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: rgba(70, 130, 180, 0.5);
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        .firework-particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .firework-particle.exploding {
+            animation: particleExplode var(--duration, 2s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes particleExplode {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+        }
+
+        .firework-particle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+        }
+
+        .firework-launch {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .firework-launch.launching {
+            animation: launchRocket var(--duration, 1.2s) ease-out forwards;
+        }
+
+        @keyframes launchRocket {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { opacity: 1; box-shadow: 0 0 20px var(--color), 0 0 40px var(--color); }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(var(--travel)) scale(0.5); }
+        }
+
+        /* 海鸥飞过动画 */
+        .seagull {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0;
+            z-index: 3;
+        }
+
+        @keyframes flyAcross {
+            0% {
+                transform: translateX(-100px) translateY(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateX(calc(100vw + 100px)) translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .postcard { width: min(340px, 92vw); }
+            .postcard-back {
+                padding: 25px 20px 20px;
+            }
+            .letter-title {
+                font-size: 1.6rem;
+                margin-bottom: 12px;
+            }
+            .letter-text {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+            .letter-text .line {
+                margin-bottom: 4px;
+            }
+            .to-label {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+            .letter-date {
+                font-size: 0.85rem;
+                margin-top: 12px;
+            }
+            .postcard-front-hint { font-size: 0.6rem; padding: 4px 10px; bottom: 8px; right: 8px; }
+            .stamp-decoration {
+                width: 45px;
+                height: 58px;
+                font-size: 1.3rem;
+                top: 12px;
+                right: 12px;
+            }
+            .divider { left: 18px; top: 60px; }
+            .letter-content { padding-left: 8px; }
+            .hint { bottom: 20px; font-size: 0.8rem; }
+            .shell { font-size: 1.3rem; }
+            .flip-hint { bottom: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 波浪 -->
+    <div class="waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- 沙滩 -->
+    <div class="beach"></div>
+
+    <!-- 光斑 -->
+    <div class="light-shimmers" id="shimmers"></div>
+
+    <div class="petals-container" id="petalsContainer"></div>
+    <div class="fireworks-container" id="fireworksContainer"></div>
+
+    <div class="container">
+        <div class="postcard" id="postcard">
+            <div class="postcard-front">
+                <img src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/ccv2%2F2026-05-02%2FMiniMax-M2.7%2F2036728547317388240%2F7eea81a17f8921a5df75046faecb601f3e32747ce7a86c6f5c5b615d067306d1..png?Expires=1777768069&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=WSS7wXonjvoG3iBjFj9ONtxWejI%3D" alt="生日祝福">
+                <div class="postcard-front-hint">点击翻转 ✉️</div>
+            </div>
+            <div class="postcard-back">
+                <div class="postcard-back-frame"></div>
+                <div class="stamp-decoration">⭐</div>
+                <div class="divider"></div>
+                <div class="to-label" id="toLabel">To 过程</div>
+                <div class="letter-content">
+                    <h2 class="letter-title" id="letterTitle"></h2>
+                    <div class="letter-text" id="letterText">
+                        <span class="line" id="line1"></span>
+                        <span class="line" id="line2"></span>
+                        <span class="line" id="line3"></span>
+                        <span class="line" id="line4"></span>
+                    </div>
+                </div>
+                <div class="letter-date" id="letterDate"></div>
+                <div class="ink-trail" id="inkTrail">
+                    <div class="ink-dot"></div>
+                    <div class="ink-dot"></div>
+                    <div class="ink-dot"></div>
+                </div>
+                <div class="flip-hint" id="flipHint">点击可翻回</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint" id="hint"><p>✨ 这是送给你的生日礼物 ✨</p></div>
+
+    <script>
+        const postcard = document.getElementById('postcard');
+        const letterTitle = document.getElementById('letterTitle');
+        const letterDate = document.getElementById('letterDate');
+        const toLabel = document.getElementById('toLabel');
+        const inkTrail = document.getElementById('inkTrail');
+        const hint = document.getElementById('hint');
+        const flipHint = document.getElementById('flipHint');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+        const petalsContainer = document.getElementById('petalsContainer');
+        const fireworksContainer = document.getElementById('fireworksContainer');
+
+        const shells = ['🐚', '🦪', '🐚', '🐚', '🦀', '⭐', '🌟', '💎'];
+        const petals = ['🌊', '💧', '🌊'];
+
+        let arrived = false, flipped = false, animationStarted = false, petalsCreated = false;
+
+        // 创建光斑
+        function createShimmers() {
+            const container = document.getElementById('shimmers');
+            for (let i = 0; i < 15; i++) {
+                const shimmer = document.createElement('div');
+                shimmer.className = 'shimmer';
+                shimmer.style.left = Math.random() * 100 + '%';
+                shimmer.style.top = Math.random() * 50 + '%';
+                shimmer.style.animationDelay = Math.random() * 2 + 's';
+                shimmer.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+                container.appendChild(shimmer);
+            }
+        }
+
+        // 创建贝壳
+        function createShells() {
+            if (petalsCreated) return;
+            petalsCreated = true;
+
+            const screenW = window.innerWidth, screenH = window.innerHeight;
+            const cardW = Math.min(520, screenW * 0.9);
+            const cardH = cardW * (3/4);
+            const cardCenterX = screenW / 2, cardCenterY = screenH / 2;
+            const safeW = cardW / 2 + 80, safeH = cardH / 2 + 60;
+
+            const shellTargets = [
+                // 沙滩上的贝壳
+                { x: cardCenterX - safeW - 30, y: screenH - 100, delay: 0 },
+                { x: cardCenterX - safeW + 20, y: screenH - 85, delay: 100 },
+                { x: cardCenterX - safeW - 50, y: screenH - 70, delay: 200 },
+                { x: cardCenterX - safeW + 50, y: screenH - 110, delay: 300 },
+                { x: cardCenterX - safeW - 20, y: screenH - 130, delay: 400 },
+
+                { x: cardCenterX + safeW + 30, y: screenH - 95, delay: 150 },
+                { x: cardCenterX + safeW - 20, y: screenH - 75, delay: 250 },
+                { x: cardCenterX + safeW + 50, y: screenH - 115, delay: 350 },
+                { x: cardCenterX + safeW, y: screenH - 140, delay: 450 },
+
+                // 信件旁边的贝壳
+                { x: cardCenterX - safeW - 10, y: cardCenterY + safeH + 10, delay: 500 },
+                { x: cardCenterX + safeW + 10, y: cardCenterY + safeH + 20, delay: 550 },
+            ];
+
+            shellTargets.forEach((target, i) => {
+                const shell = document.createElement('div');
+                shell.className = 'shell';
+                shell.textContent = shells[i % shells.length];
+                shell.style.left = target.x + 'px';
+                shell.style.top = target.y + 'px';
+                shell.style.fontSize = (1.2 + Math.random() * 0.6) + 'rem';
+                shell.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+
+                petalsContainer.appendChild(shell);
+
+                setTimeout(() => {
+                    shell.style.opacity = '1';
+                    shell.style.transition = `transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease`;
+                    shell.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+                }, 800 + target.delay);
+            });
+        }
+
+        // 海鸥飞过
+        function flySeagull() {
+            const seagull = document.createElement('div');
+            seagull.className = 'seagull';
+            seagull.textContent = '🕊️';
+            seagull.style.top = '15%';
+            seagull.style.animation = `flyAcross ${8 + Math.random() * 4}s linear forwards`;
+            document.body.appendChild(seagull);
+
+            setTimeout(() => seagull.remove(), 12000);
+        }
+
+        function createFirework(x, y, color) {
+            const particleCount = 35 + Math.floor(Math.random() * 15);
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = (5 + Math.random() * 5) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = color;
+                particle.style.boxShadow = `0 0 6px ${color}, 0 0 12px ${color}`;
+
+                const angle = (i / particleCount) * 360 + (Math.random() - 0.5) * 30;
+                const velocity = 80 + Math.random() * 120;
+                const radians = angle * Math.PI / 180;
+                particle.style.setProperty('--tx', Math.cos(radians) * velocity + 'px');
+                particle.style.setProperty('--ty', Math.sin(radians) * velocity + 'px');
+                particle.style.setProperty('--duration', (1.2 + Math.random() * 0.6) + 's');
+
+                fireworksContainer.appendChild(particle);
+                setTimeout(() => particle.classList.add('exploding'), 10);
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function createLaunch(x, startY, endY, color) {
+            const launch = document.createElement('div');
+            launch.className = 'firework-launch';
+            launch.style.left = x + 'px';
+            launch.style.top = startY + 'px';
+            launch.style.backgroundColor = color;
+            launch.style.setProperty('--color', color);
+            launch.style.setProperty('--travel', (endY - startY) + 'px');
+            launch.style.setProperty('--duration', (0.6 + Math.random() * 0.3) + 's');
+
+            fireworksContainer.appendChild(launch);
+            launch.classList.add('launching');
+
+            setTimeout(() => { createFirework(x, endY, color); launch.remove(); }, 700);
+            setTimeout(() => launch.remove(), 1200);
+        }
+
+        function launchFireworks() {
+            const screenW = window.innerWidth, screenH = window.innerHeight;
+            const colors = ['#87CEEB', '#00CED1', '#FFE4B5', '#F0E68C', '#B0E0E6', '#ADD8E6', '#AFEEEE'];
+
+            const waves = [
+                { x: screenW * 0.25, d: 0 }, { x: screenW * 0.5, d: 150 }, { x: screenW * 0.75, d: 300 },
+                { x: screenW * 0.35, d: 500 }, { x: screenW * 0.65, d: 600 }, { x: screenW * 0.5, d: 700 },
+                { x: screenW * 0.3, d: 900 }, { x: screenW * 0.7, d: 1000 },
+            ];
+
+            waves.forEach(pos => {
+                setTimeout(() => createLaunch(pos.x, screenH + 30, screenH * 0.2 + Math.random() * screenH * 0.15, colors[Math.floor(Math.random() * colors.length)]), pos.d);
+            });
+        }
+
+        function deliverPostcard() {
+            setTimeout(() => {
+                postcard.classList.add('arrived');
+                setTimeout(createShells, 800);
+            }, 400);
+
+            // 海鸥飞过
+            setTimeout(() => flySeagull(), 2000);
+            setTimeout(() => flySeagull(), 6000);
+        }
+
+        function stringToSpans(text) {
+            return text.split('').map(c => `<span>${c}</span>`).join('');
+        }
+
+        function startWriteAnimation() {
+            animationStarted = true;
+            const titleText = "生日快乐";
+            const lines = [
+                "祝姐姐生日快乐，一路玩得开心！",
+                "愿你继续看天下，也继续见自己。",
+                "带着好奇心出发，带着勇气走远。",
+                "最重要的健康与幸福也一定会一路相伴！"
+            ];
+            const dateText = "2026年5月2日";
+
+            setTimeout(() => toLabel.style.opacity = '1', 200);
+
+            setTimeout(() => {
+                letterTitle.innerHTML = stringToSpans(titleText);
+                letterTitle.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 180));
+                letterTitle.style.opacity = '1';
+            }, 500);
+
+            setTimeout(() => {
+                line1.innerHTML = stringToSpans(lines[0]);
+                line1.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 90));
+            }, 900);
+
+            setTimeout(() => {
+                line2.innerHTML = stringToSpans(lines[1]);
+                line2.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 90));
+            }, 900 + lines[0].length * 90 + 200);
+
+            setTimeout(() => {
+                line3.innerHTML = stringToSpans(lines[2]);
+                line3.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 90));
+            }, 900 + lines[0].length * 90 + 200 + lines[1].length * 90 + 200);
+
+            setTimeout(() => {
+                line4.innerHTML = stringToSpans(lines[3]);
+                line4.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 90));
+            }, 900 + lines[0].length * 90 + 200 + lines[1].length * 90 + 200 + lines[2].length * 90 + 200);
+
+            const dd = 900 + lines[0].length * 90 + 200 + lines[1].length * 90 + 200 + lines[2].length * 90 + 200 + lines[3].length * 90 + 300;
+            setTimeout(() => {
+                letterDate.innerHTML = stringToSpans(dateText);
+                letterDate.querySelectorAll('span').forEach((s, i) => setTimeout(() => s.classList.add('show'), i * 80));
+                letterDate.style.opacity = '1';
+            }, dd);
+
+            setTimeout(() => inkTrail.style.opacity = '1', dd + 200);
+            setTimeout(() => launchFireworks(), dd + 400);
+            setTimeout(() => flipHint.style.opacity = '0.5', dd + 700);
+        }
+
+        postcard.addEventListener('click', function(e) {
+            if (!arrived) return;
+            flipped = !flipped;
+            if (flipped) {
+                postcard.classList.add('flipped');
+                hint.classList.remove('show');
+                flipHint.style.opacity = '0';
+                if (!animationStarted) startWriteAnimation();
+            } else {
+                postcard.classList.remove('flipped');
+                setTimeout(() => { hint.textContent = '✨ 再次感谢遇见你 ✨'; hint.classList.add('show'); }, 300);
+            }
+        });
+
+        window.addEventListener('load', () => {
+            createShimmers();
+            setTimeout(() => hint.classList.add('show'), 300);
+            deliverPostcard();
+        });
+
+        postcard.addEventListener('transitionend', function(e) {
+            if (e.propertyName === 'transform' && !flipped) {
+                arrived = true;
+                hint.textContent = '✨ 点击翻转查收祝福 ✨';
+            }
+        });
+    </script>
+</body>
+</html>
