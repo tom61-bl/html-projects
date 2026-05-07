@@ -804,6 +804,226 @@
       color: var(--pixel-cyan);
     }
 
+    .footer-btn.wrong-notes {
+      color: var(--pixel-orange);
+      border-color: var(--pixel-orange);
+    }
+
+    .footer-btn.wrong-notes:hover {
+      background: rgba(243, 129, 129, 0.2);
+    }
+
+    .footer-btn.wrong-notes.has-notes {
+      animation: streakPulse 2s infinite;
+    }
+
+    /* Streak Indicator */
+    .streak-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #f39c12, #e74c3c);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: white;
+      display: none;
+      animation: streakPulse 1s infinite;
+    }
+
+    @keyframes streakPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(243, 156, 18, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(243, 156, 18, 0.8); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes levelUpPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes scorePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .shake {
+      animation: shake 0.3s ease-in-out;
+    }
+
+    .score-pop {
+      animation: scorePop 0.4s ease-out;
+    }
+
+    /* Wrong Notes Screen */
+    .wrong-notes-screen {
+      display: none;
+    }
+
+    .wrong-notes-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 16px 0;
+    }
+
+    .wrong-note-item {
+      background: #1a1a2e;
+      border: 3px solid #4a4a6a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wrong-note-item:hover {
+      border-color: var(--pixel-cyan);
+      transform: translateX(4px);
+    }
+
+    .wrong-note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .wrong-note-title {
+      font-weight: bold;
+      color: var(--pixel-orange);
+    }
+
+    .wrong-note-score {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
+      color: #e74c3c;
+    }
+
+    .wrong-note-question {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    .wrong-note-answer {
+      font-size: 12px;
+      color: var(--pixel-cyan);
+      padding: 8px;
+      background: rgba(0, 217, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    /* Sentence Comparison */
+    .comparison-panel {
+      background: #1a1a2e;
+      border: 3px solid #4a4a6a;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .comparison-title {
+      font-size: 12px;
+      color: var(--pixel-yellow);
+      margin-bottom: 12px;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    .comparison-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .comparison-label {
+      min-width: 60px;
+      font-size: 11px;
+      font-family: 'Press Start 2P', cursive;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .comparison-label.user {
+      background: var(--pixel-blue);
+      color: var(--pixel-cyan);
+    }
+
+    .comparison-label.perfect {
+      background: var(--pixel-orange);
+      color: white;
+    }
+
+    .comparison-text {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+
+    .comparison-text .highlight {
+      background: rgba(249, 237, 105, 0.3);
+      padding: 0 2px;
+    }
+
+    .comparison-text .match {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .retry-btn {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border-color: #e74c3c;
+      color: white;
+    }
+
+    .retry-btn:hover {
+      background: linear-gradient(135deg, #c0392b, #a93226);
+      border-color: #c0392b;
+      color: white;
+    }
+
+    /* Sound Toggle */
+    .sound-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 50;
+      background: #2d2d44;
+      border: 2px solid #4a4a6a;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .sound-toggle:hover {
+      border-color: var(--pixel-cyan);
+    }
+
+    .sound-toggle.muted {
+      opacity: 0.5;
+    }
+
     /* ========== RESPONSIVE ========== */
     @media (max-width: 600px) {
       .game-title { font-size: 10px; }
@@ -976,9 +1196,16 @@
           </div>
         </div>
 
+        <!-- Sentence Comparison -->
+        <div class="comparison-panel" id="comparison-panel">
+          <div class="comparison-title">📋 逐句对比</div>
+          <div id="comparison-content"></div>
+        </div>
+
         <div class="action-buttons" style="justify-content: center;">
           <button class="game-btn primary" onclick="nextMission()">下一关</button>
           <button class="game-btn secondary" onclick="showStatus()">查看状态</button>
+          <button class="game-btn retry-btn" id="retry-btn" onclick="retryMission()">🔄 重做</button>
         </div>
       </div>
 
@@ -1059,13 +1286,29 @@
           <button class="game-btn secondary" onclick="backToGame()">返回游戏</button>
         </div>
       </div>
+
+      <!-- Wrong Notes Screen -->
+      <div class="wrong-notes-screen" id="wrong-notes-screen">
+        <div class="status-title">📝 错题本</div>
+        <p style="color: #888; margin-bottom: 16px; font-size: 13px;">点击题目可重新练习</p>
+        <div class="wrong-notes-list" id="wrong-notes-list">
+          <!-- Generated by JS -->
+        </div>
+        <div class="action-buttons" style="justify-content: center; margin-top: 16px;">
+          <button class="game-btn secondary" onclick="backToGame()">返回游戏</button>
+        </div>
+      </div>
     </main>
 
     <!-- Footer -->
     <footer class="game-footer">
       <button class="footer-btn" onclick="showStatus()">📊 状态</button>
+      <button class="footer-btn wrong-notes" onclick="showWrongNotes()">📝 错题本</button>
       <button class="footer-btn" onclick="showHelp()">❓ 帮助</button>
     </footer>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔊</button>
 
     <!-- Level Up Overlay -->
     <div class="level-up" id="level-up">
@@ -1253,8 +1496,93 @@
       },
       achievements: [],
       currentMissionIndex: 0,
-      startTime: null
+      startTime: null,
+      wrongNotes: [],      // {missionId, question, userAnswer, perfectAnswer, score}
+      streak: 0,           // 连续好成绩次数
+      soundEnabled: true,
+      lastAnswers: {}       // 记录每个题目的答案
     };
+
+    // ==================== SOUND SYSTEM ====================
+
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (!gameState.soundEnabled) return;
+      try {
+        initAudio();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        switch(type) {
+          case 'click':
+            oscillator.frequency.value = 800;
+            oscillator.type = 'square';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.05);
+            break;
+          case 'success':
+            oscillator.frequency.value = 523;
+            oscillator.type = 'square';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            setTimeout(() => {
+              oscillator.frequency.value = 659;
+            }, 100);
+            setTimeout(() => {
+              oscillator.frequency.value = 784;
+            }, 200);
+            oscillator.stop(audioCtx.currentTime + 0.3);
+            break;
+          case 'fail':
+            oscillator.frequency.value = 200;
+            oscillator.type = 'sawtooth';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2);
+            break;
+          case 'levelup':
+            oscillator.frequency.value = 440;
+            oscillator.type = 'square';
+            gainNode.gain.value = 0.15;
+            oscillator.start();
+            setTimeout(() => { oscillator.frequency.value = 554; }, 100);
+            setTimeout(() => { oscillator.frequency.value = 659; }, 200);
+            setTimeout(() => { oscillator.frequency.value = 880; }, 300);
+            oscillator.stop(audioCtx.currentTime + 0.5);
+            break;
+          case 'streak':
+            oscillator.frequency.value = 880;
+            oscillator.type = 'square';
+            gainNode.gain.value = 0.1;
+            oscillator.start();
+            setTimeout(() => { oscillator.frequency.value = 1047; }, 80);
+            setTimeout(() => { oscillator.frequency.value = 1175; }, 160);
+            oscillator.stop(audioCtx.currentTime + 0.3);
+            break;
+        }
+      } catch(e) {
+        // Audio not supported
+      }
+    }
+
+    function toggleSound() {
+      gameState.soundEnabled = !gameState.soundEnabled;
+      const btn = document.getElementById('sound-toggle');
+      btn.textContent = gameState.soundEnabled ? '🔊' : '🔇';
+      btn.classList.toggle('muted', !gameState.soundEnabled);
+      if (gameState.soundEnabled) playSound('click');
+    }
 
     // ==================== GAME FUNCTIONS ====================
 
@@ -1291,7 +1619,11 @@
         },
         achievements: [],
         currentMissionIndex: 0,
-        startTime: Date.now()
+        startTime: Date.now(),
+        wrongNotes: [],
+        streak: 0,
+        soundEnabled: true,
+        lastAnswers: {}
       };
       saveGame();
       showGameScreen();
@@ -1381,9 +1713,12 @@
     }
 
     function submitAnswer() {
+      playSound('click');
       const answer = document.getElementById('user-answer').value.trim();
       if (!answer) {
         alert('请输入你的回答！');
+        document.getElementById('user-answer').classList.add('shake');
+        setTimeout(() => document.getElementById('user-answer').classList.remove('shake'), 300);
         return;
       }
 
@@ -1429,9 +1764,20 @@
       document.getElementById('result-screen').style.display = 'block';
 
       const npc = NPCS[mission.npc];
+      const userAnswer = document.getElementById('user-answer').value.trim();
 
-      // Score display
-      document.getElementById('result-score').textContent = result.score;
+      // Score display with animation
+      const scoreEl = document.getElementById('result-score');
+      scoreEl.textContent = result.score;
+      scoreEl.classList.add('score-pop');
+      setTimeout(() => scoreEl.classList.remove('score-pop'), 400);
+
+      // Play sound based on score
+      if (result.score >= 80) {
+        playSound('success');
+      } else if (result.score < 40) {
+        playSound('fail');
+      }
 
       // Grade
       let grade, gradeClass;
@@ -1445,8 +1791,11 @@
       gradeEl.textContent = grade;
       gradeEl.className = 'result-grade result-grade.' + gradeClass;
 
-      // Exp gained
-      const expGained = Math.round(result.score * 1.5);
+      // Exp gained with streak bonus
+      let expGained = Math.round(result.score * 1.5);
+      if (gameState.streak >= 3) {
+        expGained = Math.round(expGained * 1.5);
+      }
       document.getElementById('exp-gained').textContent = '+' + expGained;
       document.getElementById('exp-gained').className = 'stat-value positive';
 
@@ -1459,6 +1808,17 @@
       const timeTaken = Math.round((Date.now() - gameState.startTime) / 1000);
       document.getElementById('time-taken').textContent = timeTaken + '秒';
 
+      // Update streak
+      if (result.score >= 80) {
+        gameState.streak++;
+        if (gameState.streak >= 2) {
+          playSound('streak');
+          showStreak();
+        }
+      } else {
+        gameState.streak = 0;
+      }
+
       // Update game state
       const oldLevel = gameState.player.level;
       gameState.player.exp += expGained;
@@ -1467,11 +1827,47 @@
       // Check level up
       checkLevelUp(oldLevel);
 
+      // Save answer for comparison
+      gameState.lastAnswers[mission.id] = userAnswer;
+
+      // Add to wrong notes if score < 60
+      if (result.score < 60) {
+        const existingIndex = gameState.wrongNotes.findIndex(n => n.missionId === mission.id);
+        if (existingIndex >= 0) {
+          // Update existing
+          gameState.wrongNotes[existingIndex] = {
+            missionId: mission.id,
+            title: mission.title,
+            question: mission.question,
+            userAnswer: userAnswer,
+            perfectAnswer: mission.perfectAnswer,
+            score: result.score
+          };
+        } else {
+          gameState.wrongNotes.push({
+            missionId: mission.id,
+            title: mission.title,
+            question: mission.question,
+            userAnswer: userAnswer,
+            perfectAnswer: mission.perfectAnswer,
+            score: result.score
+          });
+        }
+        // Show retry button
+        document.getElementById('retry-btn').style.display = 'inline-block';
+      } else {
+        document.getElementById('retry-btn').style.display = 'none';
+      }
+
+      // Show comparison
+      showComparison(userAnswer, mission.perfectAnswer);
+
       // Achievement
       let achievement = '';
       if (gameState.currentMissionIndex === 0) achievement = '初次冒险';
       else if (result.score >= 90) achievement = '完美表达';
       else if (result.favorChange > 0) achievement = '好感+1';
+      else if (gameState.streak >= 3) achievement = `🔥 ${gameState.streak}连击！`;
       document.getElementById('achievement-gained').textContent = achievement;
 
       // NPC feedback
@@ -1510,6 +1906,7 @@
     }
 
     function showLevelUp() {
+      playSound('levelup');
       const levelUp = document.getElementById('level-up');
       document.getElementById('level-up-text').textContent = `恭喜你升到 Lv.${gameState.player.level}！`;
       levelUp.style.display = 'block';
@@ -1528,6 +1925,105 @@
     function showHint() {
       const mission = MISSIONS[gameState.currentMissionIndex];
       alert('💡 提示：' + mission.hint);
+      playSound('click');
+    }
+
+    function showWrongNotes() {
+      playSound('click');
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('status-screen').style.display = 'none';
+      document.getElementById('wrong-notes-screen').style.display = 'block';
+      document.getElementById('player-status').style.display = 'none';
+
+      const container = document.getElementById('wrong-notes-list');
+
+      if (gameState.wrongNotes.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #888; padding: 32px;">🎉 暂无错题，继续保持！</p>';
+        return;
+      }
+
+      container.innerHTML = gameState.wrongNotes.map((note, index) => `
+        <div class="wrong-note-item" onclick="retryWrongNote(${index})">
+          <div class="wrong-note-header">
+            <span class="wrong-note-title">${note.title}</span>
+            <span class="wrong-note-score">${note.score}分</span>
+          </div>
+          <div class="wrong-note-question">${note.question}</div>
+          <div class="wrong-note-answer">💡 正确答案：${note.perfectAnswer}</div>
+        </div>
+      `).join('');
+
+      // Update footer button to show count
+      document.querySelector('.footer-btn.wrong-notes').classList.add('has-notes');
+    }
+
+    let currentWrongNoteIndex = null;
+
+    function retryWrongNote(index) {
+      playSound('click');
+      currentWrongNoteIndex = index;
+      const note = gameState.wrongNotes[index];
+      const mission = MISSIONS.find(m => m.id === note.missionId);
+      if (!mission) return;
+
+      // Jump to this mission
+      gameState.currentMissionIndex = MISSIONS.indexOf(mission);
+
+      document.getElementById('wrong-notes-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'block';
+      document.getElementById('player-status').style.display = 'flex';
+
+      loadMission(gameState.currentMissionIndex);
+    }
+
+    function retryMission() {
+      playSound('click');
+      const mission = MISSIONS[gameState.currentMissionIndex];
+      // Show hint in the answer box
+      document.getElementById('user-answer').value = mission.perfectAnswer;
+    }
+
+    function showComparison(userAnswer, perfectAnswer) {
+      const container = document.getElementById('comparison-content');
+      const userSentences = userAnswer.split(/[。！？]/).filter(s => s.trim());
+      const perfectSentences = perfectAnswer.split(/[。！？]/).filter(s => s.trim());
+
+      let html = '<div class="comparison-row"><div class="comparison-label user">你的</div><div class="comparison-text">';
+      userSentences.forEach(s => {
+        // Highlight keywords that match perfect answer
+        let highlighted = s.trim();
+        perfectSentences.forEach(ps => {
+          const words = ps.trim().split('').filter(c => c.length > 1);
+          words.slice(0, 3).forEach(w => {
+            if (highlighted.includes(w)) {
+              highlighted = highlighted.replace(new RegExp(w, 'g'), `<span class="match">${w}</span>`);
+            }
+          });
+        });
+        html += `<span class="highlight">${highlighted}</span>。<br>`;
+      });
+      html += '</div></div>';
+
+      html += '<div class="comparison-row"><div class="comparison-label perfect">标准</div><div class="comparison-text">';
+      perfectSentences.forEach(s => {
+        html += `<span class="highlight">${s.trim()}</span>。<br>`;
+      });
+      html += '</div></div>';
+
+      container.innerHTML = html;
+    }
+
+    function showStreak() {
+      if (gameState.streak >= 2) {
+        const streakEl = document.createElement('div');
+        streakEl.className = 'streak-indicator';
+        streakEl.textContent = `🔥 ${gameState.streak}连`;
+        document.querySelector('.game-container').appendChild(streakEl);
+        streakEl.style.display = 'block';
+        setTimeout(() => streakEl.remove(), 3000);
+      }
     }
 
     function updatePromotionTrack() {
@@ -1595,6 +2091,15 @@
     window.onload = function() {
       if (loadGame()) {
         document.getElementById('continue-btn').style.display = 'block';
+      }
+      // Update sound toggle state
+      if (gameState.soundEnabled === false) {
+        document.getElementById('sound-toggle').textContent = '🔇';
+        document.getElementById('sound-toggle').classList.add('muted');
+      }
+      // Update wrong notes button
+      if (gameState.wrongNotes && gameState.wrongNotes.length > 0) {
+        document.querySelector('.footer-btn.wrong-notes')?.classList.add('has-notes');
       }
     };
   </script>
