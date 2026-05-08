@@ -6,41 +6,17 @@
   <title>像素职场晋升模拟器</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --pixel-black: #1a1a2e;
-      --pixel-dark: #16213e;
-      --pixel-blue: #0f3460;
-      --pixel-cyan: #00d9ff;
-      --pixel-yellow: #f9ed69;
-      --pixel-orange: #f38181;
-      --pixel-green: #27ae60;
-      --pixel-white: #eaeaea;
-      --boss-color: #e74c3c;
-      --colleague-color: #3498db;
-      --hr-color: #9b59b6;
-      --client-color: #f39c12;
-      --peer-color: #27ae60;
-    }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Noto Sans SC', sans-serif;
-      background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 100%);
+      background: #5c3a21;
       min-height: 100vh;
-      color: var(--pixel-white);
       overflow: hidden;
-      user-select: none;
     }
 
-    /* Scanlines */
-    .scanlines {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-      z-index: 1000;
-    }
+    /* Pixel art scale */
+    .pixel-scale { image-rendering: pixelated; }
 
     /* Game Container */
     .game-container {
@@ -48,415 +24,476 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
+      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 50%, #7CB342 100%);
     }
 
-    /* Header */
+    /* Header Bar - Stardew Style */
     .game-header {
       position: fixed;
       top: 0; left: 0; right: 0;
-      background: linear-gradient(180deg, rgba(26,26,46,0.95) 0%, rgba(26,26,46,0.8) 100%);
-      border-bottom: 3px solid #4a4a6a;
-      padding: 12px 20px;
+      height: 48px;
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border-bottom: 4px solid #3d2817;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
       z-index: 100;
+      box-shadow: 0 4px 0 #3d2817;
     }
 
     .game-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 12px;
-      color: var(--pixel-cyan);
-      text-shadow: 2px 2px 0 #000;
-    }
-
-    .player-status-bar {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-    }
-
-    .status-icon { font-size: 16px; }
-
-    .status-label { color: #888; font-size: 10px; }
-
-    .status-value {
-      font-family: 'Press Start 2P', cursive;
       font-size: 10px;
-      color: var(--pixel-yellow);
+      color: #f4d03f;
+      text-shadow: 2px 2px 0 #3d2817;
     }
 
-    .exp-bar-container {
-      width: 100px;
-      height: 8px;
-      background: #0a0a14;
+    .header-stats {
+      display: flex;
+      gap: 16px;
+    }
+
+    .header-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.3);
+      padding: 4px 12px;
       border-radius: 4px;
-      overflow: hidden;
+      border: 2px solid #3d2817;
     }
 
-    .exp-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--pixel-cyan), var(--pixel-yellow));
-      transition: width 0.3s;
+    .header-stat-icon { font-size: 14px; }
+    .header-stat-value {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      color: #fff;
     }
 
-    /* Isometric Game Area */
-    .game-area {
+    /* Game World */
+    .game-world {
       flex: 1;
       position: relative;
       overflow: hidden;
-      margin-top: 60px;
+      margin-top: 48px;
     }
 
-    .iso-ground {
+    /* Ground */
+    .ground {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotateX(60deg) rotateZ(-45deg);
-      width: 800px;
-      height: 800px;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
       background:
-        repeating-linear-gradient(0deg, transparent 0px, transparent 79px, rgba(74,74,106,0.3) 79px, rgba(74,74,106,0.3) 80px),
-        repeating-linear-gradient(90deg, transparent 0px, transparent 79px, rgba(74,74,106,0.3) 79px, rgba(74,74,106,0.3) 80px),
-        linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      transform-style: preserve-3d;
+        repeating-linear-gradient(90deg, transparent 0px, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px),
+        repeating-linear-gradient(0deg, transparent 0px, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px),
+        linear-gradient(180deg, #7CB342 0%, #558B2F 100%);
     }
 
-    /* Office Furniture - Isometric Boxes */
-    .iso-object {
+    /* Dirt Path */
+    .dirt-path {
       position: absolute;
-      transform-style: preserve-3d;
-      cursor: default;
+      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
+      border: 3px solid #5d4037;
     }
 
-    .iso-object .top {
+    /* Buildings */
+    .building {
       position: absolute;
-      background: #2d2d44;
-      border: 2px solid #4a4a6a;
+      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
+      border: 4px solid #5d4037;
+      box-shadow: inset -8px 0 0 rgba(0,0,0,0.1);
     }
 
-    .iso-object .front {
+    .building-roof {
       position: absolute;
-      background: #1a1a2e;
-      border: 2px solid #4a4a6a;
-      border-top: none;
-    }
-
-    .iso-object .side {
-      position: absolute;
-      background: #252538;
-      border: 2px solid #4a4a6a;
-      border-top: none;
-    }
-
-    /* Desks */
-    .desk {
-      width: 80px;
-      height: 60px;
-    }
-
-    .desk .top {
-      width: 80px;
-      height: 80px;
-      transform: translateZ(40px);
-    }
-
-    .desk .front {
-      width: 80px;
+      top: -30px;
+      left: -10px;
+      right: -10px;
       height: 40px;
-      transform: rotateX(-90deg) translateZ(30px);
+      background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     }
 
-    .desk .side {
-      width: 60px;
-      height: 40px;
-      transform: rotateX(-90deg) rotateY(90deg) translateZ(50px);
-    }
-
-    /* Meeting Table */
-    .meeting-table {
-      width: 160px;
-      height: 80px;
-    }
-
-    .meeting-table .top {
-      width: 160px;
-      height: 160px;
-      transform: translateZ(50px);
-    }
-
-    .meeting-table .front {
-      width: 160px;
-      height: 50px;
-      transform: rotateX(-90deg) translateZ(80px);
-    }
-
-    /* Office Plant */
-    .plant {
-      width: 40px;
-      height: 30px;
-    }
-
-    .plant .top {
-      width: 40px;
-      height: 40px;
-      background: #27ae60;
-      border: 2px solid #2ecc71;
-      transform: translateZ(60px);
-      border-radius: 50%;
-    }
-
-    .plant .front {
-      width: 40px;
-      height: 60px;
-      background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%);
-      transform: rotateX(-90deg) translateZ(15px);
-      border-radius: 0 0 50% 50%;
-    }
-
-    /* Sofa */
-    .sofa {
-      width: 120px;
-      height: 50px;
-    }
-
-    .sofa .top {
-      width: 120px;
-      height: 50px;
-      background: #8e44ad;
-      transform: translateZ(30px);
-    }
-
-    .sofa .front {
-      width: 120px;
-      height: 30px;
-      background: linear-gradient(180deg, #9b59b6 0%, #6c3483 100%);
-      transform: rotateX(-90deg) translateZ(25px);
-    }
-
-    /* Water Cooler */
-    .cooler {
-      width: 30px;
-      height: 30px;
-    }
-
-    .cooler .top {
-      width: 30px;
-      height: 30px;
-      background: #3498db;
-      transform: translateZ(100px);
-    }
-
-    .cooler .front {
-      width: 30px;
-      height: 100px;
-      background: linear-gradient(180deg, #3498db 0%, #2980b9 50%, #1a5276 100%);
-      transform: rotateX(-90deg) translateZ(15px);
-    }
-
-    /* NPC Characters */
-    .character {
+    .building-door {
       position: absolute;
-      font-size: 32px;
-      cursor: pointer;
-      transition: transform 0.1s;
-      z-index: 50;
-      filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.5));
-    }
-
-    .character:hover {
-      transform: scale(1.1);
-    }
-
-    .character-name {
-      position: absolute;
-      bottom: -20px;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 10px;
-      font-family: 'Press Start 2P', cursive;
-      white-space: nowrap;
-      padding: 2px 6px;
-      background: rgba(0,0,0,0.8);
-      border-radius: 4px;
-      color: var(--pixel-white);
+      width: 40px;
+      height: 60px;
+      background: linear-gradient(180deg, #5d4037 0%, #3e2723 100%);
+      border: 3px solid #3e2723;
+      border-bottom: none;
     }
 
-    .character.boss .character-name { color: var(--boss-color); }
-    .character.colleague .character-name { color: var(--colleague-color); }
-    .character.hr .character-name { color: var(--hr-color); }
-    .character.client .character-name { color: var(--client-color); }
-    .character.peer .character-name { color: var(--peer-color); }
-
-    .character.interactable {
-      animation: charBounce 0.5s infinite alternate;
-    }
-
-    @keyframes charBounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-5px); }
-    }
-
-    /* Player Character */
-    .player {
-      position: absolute;
-      font-size: 36px;
-      z-index: 60;
-      filter: drop-shadow(3px 5px 5px rgba(0,0,0,0.6));
-      transition: left 0.15s, top 0.15s;
-    }
-
-    .player-shadow {
+    .building-window {
       position: absolute;
       width: 30px;
-      height: 15px;
-      background: rgba(0,0,0,0.3);
+      height: 30px;
+      background: linear-gradient(180deg, #81d4fa 0%, #4fc3f7 100%);
+      border: 3px solid #5d4037;
+    }
+
+    .building-label {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(93, 64, 55, 0.9);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #fff;
+      white-space: nowrap;
+      border: 2px solid #3d2817;
+    }
+
+    /* Office Interior Buildings */
+    .office-building {
+      position: absolute;
+      background: linear-gradient(180deg, #90a4ae 0%, #78909c 100%);
+      border: 4px solid #546e7a;
+      box-shadow: inset -8px 0 0 rgba(0,0,0,0.1);
+    }
+
+    .office-building .building-roof {
+      background: linear-gradient(180deg, #455a64 0%, #263238 100%);
+    }
+
+    .office-building .building-door {
+      background: linear-gradient(180deg, #607d8b 0%, #455a64 100%);
+    }
+
+    /* Trees */
+    .tree {
+      position: absolute;
+    }
+
+    .tree-trunk {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 40px;
+      background: linear-gradient(90deg, #6d4c41 0%, #8d6e63 50%, #6d4c41 100%);
+      border: 2px solid #5d4037;
+    }
+
+    .tree-leaves {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 64px;
+      height: 64px;
+      background: radial-gradient(ellipse at center, #4caf50 0%, #2e7d32 70%, transparent 70%);
       border-radius: 50%;
-      transform: translateX(3px) translateY(10px);
+    }
+
+    /* Fences */
+    .fence {
+      position: absolute;
+      height: 32px;
+      width: 16px;
+      background: linear-gradient(90deg, #a1887f 0%, #8d6e63 50%, #a1887f 100%);
+      border: 2px solid #6d4c41;
+    }
+
+    .fence::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -2px;
+      width: 16px;
+      height: 12px;
+      background: linear-gradient(90deg, #a1887f 0%, #8d6e63 50%, #a1887f 100%);
+      border: 2px solid #6d4c41;
+      border-radius: 4px 4px 0 0;
+    }
+
+    /* Characters - Stardew Style */
+    .character {
+      position: absolute;
+      width: 32px;
+      height: 48px;
+      cursor: pointer;
+      transition: left 0.15s linear, top 0.15s linear;
+      z-index: 50;
+    }
+
+    .character-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      animation: characterBob 0.6s ease-in-out infinite;
+    }
+
+    @keyframes characterBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    .character.walking .character-body {
+      animation: characterWalk 0.2s steps(2) infinite;
+    }
+
+    @keyframes characterWalk {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* Character pixel art using box-shadow */
+    .char-sprite {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: transparent;
+    }
+
+    /* Player sprite - blue shirt */
+    .player-sprite {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .player-sprite::before {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ffcc80;
+      box-shadow:
+        /* Hair */
+        -8px -28px 0 #5d4037, -4px -28px 0 #5d4037, 0px -28px 0 #5d4037, 4px -28px 0 #5d4037, 8px -28px 0 #5d4037,
+        -8px -24px 0 #5d4037, -4px -24px 0 #5d4037, 0px -24px 0 #5d4037, 4px -24px 0 #5d4037, 8px -24px 0 #5d4037,
+        /* Face */
+        -4px -20px 0 #ffcc80, 4px -20px 0 #ffcc80,
+        -4px -16px 0 #ffcc80, 0px -16px 0 #5d4037, 4px -16px 0 #ffcc80,
+        /* Body (blue shirt) */
+        -8px -12px 0 #1976d2, -4px -12px 0 #1976d2, 0px -12px 0 #1976d2, 4px -12px 0 #1976d2, 8px -12px 0 #1976d2,
+        -8px -8px 0 #1976d2, -4px -8px 0 #1976d2, 0px -8px 0 #1976d2, 4px -8px 0 #1976d2, 8px -8px 0 #1976d2,
+        -8px -4px 0 #1565c0, -4px -4px 0 #1565c0, 0px -4px 0 #1565c0, 4px -4px 0 #1565c0, 8px -4px 0 #1565c0,
+        /* Legs (brown pants) */
+        -4px 0px 0 #6d4c41, 4px 0px 0 #6d4c41,
+        -4px 4px 0 #5d4037, 4px 4px 0 #5d4037;
+    }
+
+    /* Shadow */
+    .character-shadow {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 8px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 50%;
+    }
+
+    /* NPC indicator */
+    .character .indicator {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-family: 'Press Start 2P', cursive;
+      color: #fff;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.2s;
+      border: 1px solid #fff;
+    }
+
+    .character:hover .indicator,
+    .character.nearby .indicator {
+      opacity: 1;
+    }
+
+    /* NPC specific colors */
+    .character.npc-boss .indicator { color: #e74c3c; border-color: #e74c3c; }
+    .character.npc-colleague .indicator { color: #3498db; border-color: #3498db; }
+    .character.npc-hr .indicator { color: #9b59b6; border-color: #9b59b6; }
+    .character.npc-client .indicator { color: #f39c12; border-color: #f39c12; }
+    .character.npc-peer .indicator { color: #27ae60; border-color: #27ae60; }
+
+    /* Interaction prompt */
+    .interact-prompt {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f4d03f;
+      color: #3d2817;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 8px;
+      font-family: 'Press Start 2P', cursive;
+      display: none;
+      border: 2px solid #3d2817;
+      box-shadow: 2px 2px 0 #3d2817;
+    }
+
+    .character.nearby .interact-prompt {
+      display: block;
+      animation: promptBounce 0.5s ease-in-out infinite;
+    }
+
+    @keyframes promptBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-4px); }
     }
 
     /* Mini Map */
     .mini-map {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 150px;
-      height: 150px;
-      background: rgba(26,26,46,0.9);
-      border: 3px solid #4a4a6a;
+      bottom: 16px;
+      right: 16px;
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border: 4px solid #3d2817;
       border-radius: 8px;
+      padding: 8px;
       z-index: 100;
-      overflow: hidden;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     }
 
     .mini-map-title {
-      font-size: 8px;
       font-family: 'Press Start 2P', cursive;
-      color: var(--pixel-cyan);
-      padding: 6px;
+      font-size: 6px;
+      color: #f4d03f;
       text-align: center;
-      border-bottom: 2px solid #4a4a6a;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #5d4037;
     }
 
     .mini-map-content {
+      width: 120px;
+      height: 80px;
+      background: #558B2F;
+      border: 2px solid #3d2817;
       position: relative;
-      width: 100%;
-      height: calc(100% - 24px);
     }
 
     .mini-player {
       position: absolute;
-      width: 8px;
-      height: 8px;
-      background: var(--pixel-cyan);
+      width: 6px;
+      height: 6px;
+      background: #1976d2;
       border-radius: 50%;
       transform: translate(-50%, -50%);
+      border: 1px solid #fff;
     }
 
     .mini-npc {
       position: absolute;
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       transform: translate(-50%, -50%);
     }
 
-    /* NPC Indicator when near */
-    .npc-indicator {
+    /* Quest Tracker */
+    .quest-tracker {
       position: fixed;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(180deg, rgba(45,45,68,0.95) 0%, rgba(26,26,46,0.95) 100%);
-      border: 3px solid var(--pixel-cyan);
-      border-radius: 12px;
-      padding: 12px 24px;
-      display: none;
-      z-index: 200;
-      text-align: center;
-      animation: indicatorPop 0.3s ease-out;
+      top: 60px;
+      left: 16px;
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border: 4px solid #3d2817;
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 180px;
+      z-index: 100;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     }
 
-    @keyframes indicatorPop {
-      from { transform: translateX(-50%) scale(0); opacity: 0; }
-      to { transform: translateX(-50%) scale(1); opacity: 1; }
-    }
-
-    .npc-indicator-text {
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .npc-indicator-hint {
-      font-size: 11px;
-      color: #888;
-    }
-
-    .npc-indicator-hint kbd {
-      background: #4a4a6a;
-      padding: 2px 6px;
-      border-radius: 4px;
+    .quest-title {
       font-family: 'Press Start 2P', cursive;
       font-size: 8px;
+      color: #f4d03f;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #5d4037;
     }
 
-    /* Controls Help */
-    .controls-help {
+    .quest-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 11px;
+      color: #d7ccc8;
+    }
+
+    .quest-item.completed { color: #4caf50; text-decoration: line-through; }
+    .quest-item.current { color: #f4d03f; }
+    .quest-icon { font-size: 12px; }
+
+    /* Controls */
+    .controls-panel {
       position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(26,26,46,0.9);
-      border: 3px solid #4a4a6a;
+      bottom: 16px;
+      left: 16px;
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border: 4px solid #3d2817;
       border-radius: 8px;
       padding: 12px;
       z-index: 100;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     }
 
     .controls-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 8px;
-      color: var(--pixel-yellow);
+      font-size: 6px;
+      color: #f4d03f;
       margin-bottom: 8px;
+      text-align: center;
     }
 
-    .key-row {
-      display: flex;
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 28px);
       gap: 4px;
-      justify-content: center;
-      margin-bottom: 4px;
     }
 
     .key {
       width: 28px;
       height: 28px;
-      background: #2d2d44;
-      border: 2px solid #4a4a6a;
+      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
+      border: 2px solid #8d6e63;
+      border-bottom-width: 4px;
       border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
       font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      color: #3d2817;
     }
 
     .key.active {
-      background: var(--pixel-cyan);
-      color: var(--pixel-black);
-      border-color: var(--pixel-cyan);
+      background: linear-gradient(180deg, #fff 0%, #d7ccc8 100%);
+      border-bottom-width: 2px;
+      transform: translateY(2px);
     }
 
-    /* Dialogue Modal */
+    .key.e-key {
+      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
+    }
+
+    /* Dialogue Modal - Stardew Style */
     .dialogue-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.6);
       display: none;
       align-items: center;
       justify-content: center;
@@ -464,14 +501,13 @@
     }
 
     .dialogue-box {
-      background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
-      border: 4px solid #4a4a6a;
-      border-radius: 16px;
-      padding: 24px;
-      max-width: 600px;
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border: 6px solid #3d2817;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 500px;
       width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
+      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
     }
 
     .dialogue-header {
@@ -481,46 +517,47 @@
       margin-bottom: 16px;
     }
 
-    .dialogue-avatar {
-      font-size: 48px;
-      width: 64px;
-      height: 64px;
+    .dialogue-portrait {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
+      border: 4px solid #3d2817;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #1a1a2e;
-      border: 3px solid #4a4a6a;
-      border-radius: 50%;
+      font-size: 48px;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.1);
     }
 
-    .dialogue-npc-info {
+    .dialogue-info {
       flex: 1;
     }
 
-    .dialogue-npc-name {
+    .dialogue-name {
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 4px;
     }
 
-    .dialogue-npc-status {
+    .dialogue-location {
       font-size: 12px;
-      color: #888;
+      color: #a1887f;
     }
 
-    .dialogue-scene-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: var(--pixel-yellow);
+    .dialogue-scene {
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
       margin-bottom: 12px;
-      padding: 8px;
-      background: rgba(249, 237, 105, 0.1);
-      border-radius: 8px;
+      font-size: 11px;
+      color: #f4d03f;
+      border: 2px solid #5d4037;
     }
 
     .dialogue-content {
-      background: #1a1a2e;
-      border: 2px solid #4a4a6a;
+      background: rgba(255,255,255,0.1);
+      border: 3px solid #5d4037;
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 16px;
@@ -530,94 +567,88 @@
       font-size: 14px;
       line-height: 1.6;
       margin-bottom: 12px;
+      color: #fff;
     }
 
     .dialogue-question {
       font-size: 13px;
-      color: var(--pixel-cyan);
-      padding: 12px;
-      background: rgba(0, 217, 255, 0.1);
-      border-radius: 8px;
-      border-left: 3px solid var(--pixel-cyan);
+      color: #4fc3f7;
+      padding: 10px;
+      background: rgba(79, 195, 247, 0.15);
+      border-left: 4px solid #4fc3f7;
+      border-radius: 0 6px 6px 0;
     }
 
-    .dialogue-input-area {
-      margin-bottom: 16px;
-    }
-
-    .dialogue-textarea {
+    .dialogue-input {
       width: 100%;
-      min-height: 100px;
-      background: #0a0a14;
-      border: 2px solid #4a4a6a;
-      border-radius: 8px;
+      min-height: 80px;
+      background: linear-gradient(180deg, #3e2723 0%, #2d1b18 100%);
+      border: 3px solid #5d4037;
+      border-radius: 6px;
       padding: 12px;
-      color: var(--pixel-white);
+      color: #fff;
       font-family: 'Noto Sans SC', sans-serif;
       font-size: 14px;
       resize: vertical;
     }
 
-    .dialogue-textarea:focus {
+    .dialogue-input:focus {
       outline: none;
-      border-color: var(--pixel-cyan);
+      border-color: #f4d03f;
     }
 
     .dialogue-buttons {
       display: flex;
       gap: 12px;
-      flex-wrap: wrap;
+      margin-top: 12px;
     }
 
     .dialogue-btn {
-      padding: 10px 20px;
-      border: 2px solid #4a4a6a;
-      border-radius: 8px;
-      font-size: 12px;
+      flex: 1;
+      padding: 10px;
+      border: 3px solid #5d4037;
+      border-bottom-width: 5px;
+      border-radius: 6px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Noto Sans SC', sans-serif;
+      transition: all 0.1s;
+    }
+
+    .dialogue-btn:active {
+      border-bottom-width: 3px;
+      transform: translateY(2px);
     }
 
     .dialogue-btn.primary {
-      background: var(--pixel-blue);
-      border-color: var(--pixel-cyan);
-      color: var(--pixel-cyan);
-    }
-
-    .dialogue-btn.primary:hover {
-      background: var(--pixel-cyan);
-      color: var(--pixel-black);
+      background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
+      color: #fff;
     }
 
     .dialogue-btn.hint {
-      background: transparent;
-      border-color: var(--pixel-yellow);
-      color: var(--pixel-yellow);
+      background: linear-gradient(180deg, #ffb74d 0%, #f57c00 100%);
+      color: #3d2817;
     }
 
-    .dialogue-btn.hint:hover {
-      background: rgba(249, 237, 105, 0.2);
-    }
-
-    /* Result Overlay */
-    .result-overlay {
+    /* Result Modal */
+    .result-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.7);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 600;
     }
 
-    .result-card {
-      background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
-      border: 4px solid #4a4a6a;
+    .result-box {
+      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+      border: 6px solid #3d2817;
       border-radius: 16px;
       padding: 32px;
       text-align: center;
-      min-width: 300px;
+      min-width: 320px;
+      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
     }
 
     .result-score {
@@ -628,31 +659,33 @@
 
     .result-grade {
       font-size: 18px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      font-weight: bold;
     }
 
-    .result-grade.s { color: #f1c40f; }
-    .result-grade.a { color: #27ae60; }
-    .result-grade.b { color: #3498db; }
-    .result-grade.c { color: #e67e22; }
+    .result-grade.s { color: #f4d03f; }
+    .result-grade.a { color: #4caf50; }
+    .result-grade.b { color: #4fc3f7; }
+    .result-grade.c { color: #ffb74d; }
     .result-grade.d { color: #e74c3c; }
 
     .result-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .result-stat {
-      background: #1a1a2e;
+      background: rgba(0,0,0,0.3);
       padding: 12px;
       border-radius: 8px;
+      border: 2px solid #5d4037;
     }
 
     .result-stat-label {
       font-size: 10px;
-      color: #888;
+      color: #a1887f;
       margin-bottom: 4px;
     }
 
@@ -661,17 +694,19 @@
       font-size: 14px;
     }
 
-    .result-stat-value.positive { color: #27ae60; }
+    .result-stat-value.positive { color: #4caf50; }
     .result-stat-value.negative { color: #e74c3c; }
 
     .result-feedback {
-      background: #1a1a2e;
+      background: rgba(0,0,0,0.3);
       padding: 16px;
       border-radius: 8px;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
+      text-align: left;
+      border: 2px solid #5d4037;
     }
 
     .result-feedback-avatar {
@@ -680,42 +715,82 @@
 
     .result-feedback-text {
       font-size: 13px;
-      text-align: left;
+      color: #fff;
     }
 
     .result-buttons {
       display: flex;
       gap: 12px;
-      justify-content: center;
     }
 
     .result-btn {
-      padding: 10px 20px;
-      border: 2px solid #4a4a6a;
-      border-radius: 8px;
-      font-size: 12px;
+      flex: 1;
+      padding: 12px;
+      border: 3px solid #5d4037;
+      border-bottom-width: 5px;
+      border-radius: 6px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
       cursor: pointer;
-      transition: all 0.2s;
-      background: #2d2d44;
-      color: var(--pixel-white);
+      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
+      color: #fff;
+      transition: all 0.1s;
     }
 
-    .result-btn:hover {
-      border-color: var(--pixel-cyan);
-      color: var(--pixel-cyan);
+    .result-btn:active {
+      border-bottom-width: 3px;
+      transform: translateY(2px);
     }
 
     .result-btn.primary {
-      background: var(--pixel-blue);
-      border-color: var(--pixel-cyan);
-      color: var(--pixel-cyan);
+      background: linear-gradient(180deg, #4fc3f7 0%, #0288d1 100%);
+    }
+
+    /* Level Up */
+    .level-up-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
+      border: 6px solid #3d2817;
+      border-radius: 16px;
+      padding: 32px 48px;
+      text-align: center;
+      z-index: 800;
+      display: none;
+      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+    }
+
+    .level-up-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 20px;
+      color: #3d2817;
+      margin-bottom: 16px;
+    }
+
+    .level-up-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: starSpin 1s linear infinite;
+    }
+
+    @keyframes starSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .level-up-text {
+      font-size: 14px;
+      color: #3d2817;
+      font-weight: bold;
     }
 
     /* Start Screen */
     .start-screen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(180deg, #0a0a14 0%, #1a1a2e 100%);
+      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 40%, #7CB342 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -723,295 +798,120 @@
       z-index: 900;
     }
 
-    .start-logo {
-      font-size: 20px;
-      color: var(--pixel-cyan);
+    .start-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 24px;
+      color: #3d2817;
+      text-shadow: 4px 4px 0 #f4d03f, -2px -2px 0 #8B4513;
       text-align: center;
       margin-bottom: 16px;
-      text-shadow: 3px 3px 0 #000;
-      animation: logoFloat 2s ease-in-out infinite;
+      animation: titleBounce 1s ease-in-out infinite;
     }
 
-    @keyframes logoFloat {
+    @keyframes titleBounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
 
     .start-subtitle {
       font-size: 12px;
-      color: #888;
+      color: #5d4037;
       margin-bottom: 40px;
-      letter-spacing: 4px;
     }
 
-    .start-avatar-select {
+    .start-avatar-section {
       margin-bottom: 32px;
       text-align: center;
     }
 
-    .start-avatar-select p {
+    .start-avatar-section p {
       font-size: 14px;
+      color: #3d2817;
       margin-bottom: 16px;
-      color: #aaa;
     }
 
-    .avatar-options {
+    .avatar-grid {
       display: flex;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .avatar-option {
+    .avatar-choice {
       width: 56px;
       height: 56px;
-      background: #2d2d44;
-      border: 3px solid #4a4a6a;
-      border-radius: 50%;
+      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
+      border: 4px solid #5d4037;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 32px;
       cursor: pointer;
       transition: all 0.2s;
+      box-shadow: 4px 4px 0 #3d2817;
     }
 
-    .avatar-option:hover {
-      border-color: var(--pixel-cyan);
-      transform: scale(1.1);
+    .avatar-choice:hover {
+      transform: translateY(-4px);
+      box-shadow: 4px 8px 0 #3d2817;
     }
 
-    .avatar-option.selected {
-      border-color: var(--pixel-cyan);
-      background: var(--pixel-blue);
-      box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+    .avatar-choice.selected {
+      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
+      transform: translateY(-4px);
+      box-shadow: 4px 8px 0 #3d2817;
     }
 
     .start-btn {
-      padding: 14px 40px;
-      background: linear-gradient(180deg, var(--pixel-blue) 0%, #0a2540 100%);
-      border: 3px solid var(--pixel-cyan);
+      padding: 16px 48px;
+      background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
+      border: 4px solid #2e7d32;
+      border-bottom-width: 8px;
       border-radius: 8px;
-      color: var(--pixel-cyan);
+      color: #fff;
       font-family: 'Press Start 2P', cursive;
       font-size: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.1s;
+      box-shadow: 4px 4px 0 #1b5e20;
       margin-bottom: 16px;
     }
 
-    .start-btn:hover {
-      background: var(--pixel-cyan);
-      color: var(--pixel-black);
-      transform: scale(1.05);
+    .start-btn:active {
+      border-bottom-width: 4px;
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #1b5e20;
     }
 
     .continue-btn {
-      background: transparent;
-      border-color: #4a4a6a;
-      color: #888;
-    }
-
-    .continue-btn:hover {
-      border-color: var(--pixel-yellow);
-      color: var(--pixel-yellow);
-      background: transparent;
-    }
-
-    /* Level Up Overlay */
-    .level-up-overlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
-      border: 4px solid var(--pixel-yellow);
-      border-radius: 16px;
-      padding: 32px 48px;
-      text-align: center;
-      z-index: 800;
-      display: none;
-      animation: levelUpAnim 0.5s ease-out;
-    }
-
-    @keyframes levelUpAnim {
-      0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
-      50% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); }
-      100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-    }
-
-    .level-up-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 18px;
-      color: var(--pixel-yellow);
-      margin-bottom: 16px;
-    }
-
-    .level-up-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      animation: bounce 0.5s infinite alternate;
-    }
-
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-15px); }
-    }
-
-    .level-up-text {
-      font-size: 14px;
-    }
-
-    /* Sound Toggle */
-    .sound-toggle {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      z-index: 100;
-      background: rgba(26,26,46,0.9);
-      border: 2px solid #4a4a6a;
-      border-radius: 4px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
-    }
-
-    .sound-toggle:hover {
-      border-color: var(--pixel-cyan);
-    }
-
-    .sound-toggle.muted { opacity: 0.5; }
-
-    /* Status Panel */
-    .status-panel {
-      position: fixed;
-      top: 60px;
-      left: 20px;
-      background: rgba(26,26,46,0.95);
-      border: 3px solid #4a4a6a;
-      border-radius: 12px;
-      padding: 16px;
-      min-width: 200px;
-      z-index: 100;
-      display: none;
-    }
-
-    .status-panel-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: var(--pixel-cyan);
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #4a4a6a;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 12px;
-    }
-
-    .status-row-label { color: #888; }
-
-    .status-row-value {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: var(--pixel-yellow);
-    }
-
-    .status-close {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: none;
-      border: none;
-      color: #888;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .status-close:hover { color: var(--pixel-white); }
-
-    /* Quest List */
-    .quest-list {
-      position: fixed;
-      top: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      gap: 8px;
-    }
-
-    .quest-chip {
-      background: rgba(26,26,46,0.9);
-      border: 2px solid #4a4a6a;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .quest-chip.completed {
-      border-color: #27ae60;
-      color: #27ae60;
-    }
-
-    .quest-chip.current {
-      border-color: var(--pixel-cyan);
-      color: var(--pixel-cyan);
-      animation: chipPulse 2s infinite;
-    }
-
-    @keyframes chipPulse {
-      0%, 100% { box-shadow: 0 0 5px rgba(0, 217, 255, 0.3); }
-      50% { box-shadow: 0 0 15px rgba(0, 217, 255, 0.6); }
-    }
-
-    /* Location Label */
-    .location-label {
-      position: fixed;
-      top: 65px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: var(--pixel-yellow);
-      background: rgba(26,26,46,0.9);
-      padding: 6px 16px;
-      border-radius: 20px;
-      border: 2px solid var(--pixel-yellow);
-      z-index: 100;
-      display: none;
+      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
+      border-color: #5d4037;
+      border-bottom-color: #3d2817;
+      box-shadow: 4px 4px 0 #3d2817;
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
+    @media (max-width: 600px) {
       .mini-map { display: none; }
-      .controls-help { display: none; }
-      .location-label { font-size: 8px; }
+      .controls-panel { display: none; }
+      .quest-tracker { min-width: 140px; }
+      .quest-item { font-size: 9px; }
     }
   </style>
 </head>
 <body>
-  <div class="scanlines"></div>
-
   <!-- Start Screen -->
   <div class="start-screen" id="start-screen">
-    <div class="start-logo">🎮 像素职场晋升模拟器 🎮</div>
+    <div class="start-title">🌻 像素职场<br>晋升模拟器 🌻</div>
     <div class="start-subtitle">- PYRAMID OFFICE ADVENTURE -</div>
 
-    <div class="start-avatar-select">
-      <p>选择你的角色形象：</p>
-      <div class="avatar-options">
-        <div class="avatar-option selected" data-avatar="👨‍💻">👨‍💻</div>
-        <div class="avatar-option" data-avatar="👩‍💻">👩‍💻</div>
-        <div class="avatar-option" data-avatar="🧑‍💼">🧑‍💼</div>
-        <div class="avatar-option" data-avatar="👨‍🎓">👨‍🎓</div>
-        <div class="avatar-option" data-avatar="👩‍🎓">👩‍🎓</div>
+    <div class="start-avatar-section">
+      <p>选择你的角色：</p>
+      <div class="avatar-grid">
+        <div class="avatar-choice selected" data-avatar="👨‍💻">👨‍💻</div>
+        <div class="avatar-choice" data-avatar="👩‍💻">👩‍💻</div>
+        <div class="avatar-choice" data-avatar="🧑‍💼">🧑‍💼</div>
+        <div class="avatar-choice" data-avatar="👨‍🎓">👨‍🎓</div>
+        <div class="avatar-choice" data-avatar="👩‍🎓">👩‍🎓</div>
       </div>
     </div>
 
@@ -1023,125 +923,95 @@
   <div class="game-container" id="game-container" style="display:none;">
     <!-- Header -->
     <header class="game-header">
-      <div class="game-title">像素职场</div>
-      <div class="player-status-bar">
-        <div class="status-item">
-          <span class="status-icon">👤</span>
-          <div>
-            <div class="status-label">等级</div>
-            <div class="status-value" id="level-display">Lv.1</div>
-          </div>
+      <div class="game-title">🌻 像素职场</div>
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-icon">⭐</span>
+          <span class="header-stat-value" id="level-display">Lv.1</span>
         </div>
-        <div class="status-item">
-          <span class="status-icon">💼</span>
-          <div>
-            <div class="status-label">职位</div>
-            <div class="status-value" id="title-display">实习生</div>
-          </div>
+        <div class="header-stat">
+          <span class="header-stat-icon">💼</span>
+          <span class="header-stat-value" id="title-display">实习生</span>
         </div>
-        <div class="status-item">
-          <span class="status-icon">⭐</span>
-          <div>
-            <div class="status-label">经验</div>
-            <div class="exp-bar-container">
-              <div class="exp-fill" id="exp-fill" style="width:0%"></div>
-            </div>
-          </div>
-        </div>
-        <div class="status-item">
-          <span class="status-icon">🔥</span>
-          <div>
-            <div class="status-label">连击</div>
-            <div class="status-value" id="streak-display">0</div>
-          </div>
+        <div class="header-stat">
+          <span class="header-stat-icon">🔥</span>
+          <span class="header-stat-value" id="streak-display">0</span>
         </div>
       </div>
     </header>
 
-    <!-- Quest List -->
-    <div class="quest-list" id="quest-list"></div>
-
-    <!-- Location Label -->
-    <div class="location-label" id="location-label">办公区</div>
-
-    <!-- Game Area -->
-    <div class="game-area" id="game-area">
-      <div class="iso-ground" id="iso-ground">
-        <!-- Office Objects will be added by JS -->
+    <!-- Game World -->
+    <div class="game-world" id="game-world">
+      <div class="ground" id="ground">
+        <!-- Buildings and decorations will be added by JS -->
       </div>
 
       <!-- Player -->
-      <div class="player" id="player">👨‍💻<div class="player-shadow"></div></div>
+      <div class="character player" id="player">
+        <div class="character-shadow"></div>
+        <div class="player-sprite"></div>
+      </div>
 
-      <!-- NPC Characters -->
-      <div class="character boss interactable" id="npc-boss" data-npc="boss" onclick="interactNPC('boss')">
-        👔<div class="character-name">严厉上司</div>
+      <!-- NPCs -->
+      <div class="character npc-boss" id="npc-boss" onclick="interactNPC('boss')">
+        <div class="character-shadow"></div>
+        <div class="player-sprite" style="filter: hue-rotate(0deg);"></div>
+        <div class="indicator">👔 严厉上司</div>
+        <div class="interact-prompt">[E] 交互</div>
       </div>
-      <div class="character colleague interactable" id="npc-colleague" data-npc="colleague" onclick="interactNPC('colleague')">
-        💼<div class="character-name">友善同事</div>
+      <div class="character npc-colleague" id="npc-colleague" onclick="interactNPC('colleague')">
+        <div class="character-shadow"></div>
+        <div class="player-sprite" style="filter: hue-rotate(200deg);"></div>
+        <div class="indicator">💼 友善同事</div>
+        <div class="interact-prompt">[E] 交互</div>
       </div>
-      <div class="character hr interactable" id="npc-hr" data-npc="hr" onclick="interactNPC('hr')">
-        👩‍💼<div class="character-name">HR姐姐</div>
+      <div class="character npc-hr" id="npc-hr" onclick="interactNPC('hr')">
+        <div class="character-shadow"></div>
+        <div class="player-sprite" style="filter: hue-rotate(280deg);"></div>
+        <div class="indicator">👩‍💼 HR姐姐</div>
+        <div class="interact-prompt">[E] 交互</div>
       </div>
-      <div class="character client interactable" id="npc-client" data-npc="client" onclick="interactNPC('client')">
-        🤵<div class="character-name">甲方客户</div>
+      <div class="character npc-client" id="npc-client" onclick="interactNPC('client')">
+        <div class="character-shadow"></div>
+        <div class="player-sprite" style="filter: hue-rotate(40deg);"></div>
+        <div class="indicator">🤵 甲方客户</div>
+        <div class="interact-prompt">[E] 交互</div>
       </div>
-      <div class="character peer interactable" id="npc-peer" data-npc="peer" onclick="interactNPC('peer')">
-        👨‍💻<div class="character-name">新人同事</div>
+      <div class="character npc-peer" id="npc-peer" onclick="interactNPC('peer')">
+        <div class="character-shadow"></div>
+        <div class="player-sprite" style="filter: hue-rotate(120deg);"></div>
+        <div class="indicator">👨‍💻 新人同事</div>
+        <div class="interact-prompt">[E] 交互</div>
+      </div>
+    </div>
+
+    <!-- Quest Tracker -->
+    <div class="quest-tracker" id="quest-tracker">
+      <div class="quest-title">📜 任务列表</div>
+      <div id="quest-list"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-panel">
+      <div class="controls-title">操作</div>
+      <div class="key-grid">
+        <div></div>
+        <div class="key" id="key-w">W</div>
+        <div></div>
+        <div class="key" id="key-a">A</div>
+        <div class="key" id="key-s">S</div>
+        <div class="key" id="key-d">D</div>
+      </div>
+      <div style="text-align:center; margin-top:8px;">
+        <div class="key e-key" id="key-e" style="width: 100%;">[E] 交互</div>
       </div>
     </div>
 
     <!-- Mini Map -->
     <div class="mini-map">
       <div class="mini-map-title">小地图</div>
-      <div class="mini-map-content" id="mini-map-content"></div>
-    </div>
-
-    <!-- Controls Help -->
-    <div class="controls-help">
-      <div class="controls-title">移动</div>
-      <div class="key-row">
-        <div class="key" id="key-w">W</div>
-      </div>
-      <div class="key-row">
-        <div class="key" id="key-a">A</div>
-        <div class="key" id="key-s">S</div>
-        <div class="key" id="key-d">D</div>
-      </div>
-    </div>
-
-    <!-- NPC Indicator -->
-    <div class="npc-indicator" id="npc-indicator">
-      <div class="npc-indicator-text" id="indicator-text">发现 NPC！</div>
-      <div class="npc-indicator-hint">按 <kbd>E</kbd> 或点击交互</div>
-    </div>
-
-    <!-- Sound Toggle -->
-    <button class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔊</button>
-
-    <!-- Status Panel -->
-    <div class="status-panel" id="status-panel">
-      <button class="status-close" onclick="toggleStatusPanel()">×</button>
-      <div class="status-panel-title">角色状态</div>
-      <div class="status-row">
-        <span class="status-row-label">等级</span>
-        <span class="status-row-value" id="status-level">Lv.1</span>
-      </div>
-      <div class="status-row">
-        <span class="status-row-label">职位</span>
-        <span class="status-row-value" id="status-title">实习生</span>
-      </div>
-      <div class="status-row">
-        <span class="status-row-label">经验</span>
-        <span class="status-row-value" id="status-exp">0</span>
-      </div>
-      <div class="status-row">
-        <span class="status-row-label">晋升通道</span>
-        <span class="status-row-value" id="status-track">管理序列</span>
-      </div>
-      <div class="status-row">
-        <span class="status-row-label">连击</span>
-        <span class="status-row-value" id="status-streak">0</span>
+      <div class="mini-map-content" id="mini-map-content">
+        <div class="mini-player" id="mini-player"></div>
       </div>
     </div>
   </div>
@@ -1150,34 +1020,32 @@
   <div class="dialogue-modal" id="dialogue-modal">
     <div class="dialogue-box">
       <div class="dialogue-header">
-        <div class="dialogue-avatar" id="dialogue-avatar">👔</div>
-        <div class="dialogue-npc-info">
-          <div class="dialogue-npc-name" id="dialogue-npc-name">严厉上司</div>
-          <div class="dialogue-npc-status" id="dialogue-npc-status">正在等待你的回答...</div>
+        <div class="dialogue-portrait" id="dialogue-avatar">👔</div>
+        <div class="dialogue-info">
+          <div class="dialogue-name" id="dialogue-name">严厉上司</div>
+          <div class="dialogue-location" id="dialogue-location">经理办公室</div>
         </div>
       </div>
 
-      <div class="dialogue-scene-title" id="dialogue-scene-title">📋 任务：初次见面</div>
+      <div class="dialogue-scene" id="dialogue-scene">📋 任务：初次见面</div>
 
       <div class="dialogue-content">
-        <div class="dialogue-npc-text" id="dialogue-npc-text">新人，来我办公室一趟！</div>
+        <div class="dialogue-npc-text" id="dialogue-text">新人，来我办公室一趟！</div>
         <div class="dialogue-question" id="dialogue-question">作为职场新人，第一次和上司单独交流，你应该如何开场？</div>
       </div>
 
-      <div class="dialogue-input-area">
-        <textarea class="dialogue-textarea" id="dialogue-input" placeholder="输入你的回答..."></textarea>
-      </div>
+      <textarea class="dialogue-input" id="dialogue-input" placeholder="输入你的回答..."></textarea>
 
       <div class="dialogue-buttons">
         <button class="dialogue-btn primary" onclick="submitDialogue()">提交回答</button>
-        <button class="dialogue-btn hint" onclick="showDialogueHint()">💡 提示</button>
+        <button class="dialogue-btn hint" onclick="showHint()">💡 提示</button>
       </div>
     </div>
   </div>
 
-  <!-- Result Overlay -->
-  <div class="result-overlay" id="result-overlay">
-    <div class="result-card">
+  <!-- Result Modal -->
+  <div class="result-modal" id="result-modal">
+    <div class="result-box">
       <div class="result-score" id="result-score">85</div>
       <div class="result-grade" id="result-grade">A级评价</div>
 
@@ -1196,27 +1064,27 @@
         </div>
         <div class="result-stat">
           <div class="result-stat-label">成就</div>
-          <div class="result-stat-value" id="result-achievement">完美表达</div>
+          <div class="result-stat-value" id="result-achievement">初次冒险</div>
         </div>
       </div>
 
       <div class="result-feedback">
         <div class="result-feedback-avatar" id="result-avatar">👔</div>
-        <div class="result-feedback-text" id="result-feedback-text">不错，继续保持。</div>
+        <div class="result-feedback-text" id="result-feedback">不错，继续保持。</div>
       </div>
 
       <div class="result-buttons">
         <button class="result-btn" onclick="closeResult()">继续探索</button>
-        <button class="result-btn primary" onclick="goToNextQuest()">下一任务</button>
+        <button class="result-btn primary" onclick="goToNext()">下一任务</button>
       </div>
     </div>
   </div>
 
   <!-- Level Up Overlay -->
   <div class="level-up-overlay" id="level-up-overlay">
-    <div class="level-up-title">🎉 升级！</div>
-    <div class="level-up-icon">⬆️</div>
-    <div class="level-up-text" id="level-up-text">恭喜你升到 Lv.2！</div>
+    <div class="level-up-icon">⭐</div>
+    <div class="level-up-title">升级!</div>
+    <div class="level-up-text" id="level-up-text">恭喜你升到 Lv.2!</div>
   </div>
 
   <script>
@@ -1234,61 +1102,55 @@
       peer: { name: '新人同事', avatar: '👨‍💻', color: '#27ae60' }
     };
 
-    // NPC spawn positions (percentage of game area)
-    const NPC_POSITIONS = {
-      boss: { x: 75, y: 20, location: '经理办公室' },
-      colleague: { x: 30, y: 40, location: '工位区' },
-      hr: { x: 70, y: 70, location: 'HR区域' },
-      client: { x: 20, y: 75, location: '会议室' },
-      peer: { x: 50, y: 55, location: '茶水间' }
+    // NPC positions (percentage)
+    const NPC_START_POS = {
+      boss: { x: 75, y: 20 },
+      colleague: { x: 25, y: 45 },
+      hr: { x: 70, y: 75 },
+      client: { x: 20, y: 75 },
+      peer: { x: 55, y: 50 }
     };
 
-    // Locations in the office
-    const LOCATIONS = [
-      { name: '入口大厅', x: 50, y: 90 },
-      { name: '工位区', x: 30, y: 40 },
-      { name: '茶水间', x: 50, y: 55 },
-      { name: '会议室', x: 20, y: 75 },
-      { name: '经理办公室', x: 75, y: 20 },
-      { name: 'HR区域', x: 70, y: 70 },
-      { name: '走廊', x: 50, y: 35 }
+    // Building locations
+    const BUILDINGS = [
+      { type: 'office', x: 70, y: 15, w: 120, h: 100, label: '经理办公室', doorX: 60 },
+      { type: 'office', x: 15, y: 70, w: 100, h: 80, label: '会议室', doorX: 50 },
+      { type: 'office', x: 65, y: 70, w: 100, h: 80, label: 'HR区域', doorX: 50 },
+      { type: 'farmhouse', x: 5, y: 40, w: 80, h: 70, label: '茶水间', doorX: 40 }
     ];
 
-    // Quests / Missions
+    // Missions
     const MISSIONS = [
-      { id: 1, npc: 'colleague', title: '初次见面', location: '工位区', dialogue: '嗨，新人！我是老王，以后有什么不懂的可以问我。', question: '作为新人，你应该如何回应老王的热情招呼？', hint: '简单友好地自我介绍，表达感谢和合作意愿', goodKeywords: ['谢谢', '王哥', '请多指教', '很高兴认识', '合作'], perfectAnswer: '王哥好！我是新来的，以后请多指教，有什么需要帮忙的尽管说！' },
-      { id: 2, npc: 'boss', title: '电梯相遇', location: '走廊', dialogue: '你就是新来的？', question: '在电梯里偶遇部门经理，他问你是不是新来的，你该怎么回答？', hint: '简洁自信地介绍自己，展现积极态度', goodKeywords: ['是的', '经理好', '新来', '报到', '请多关照'], perfectAnswer: '是的经理好！我是新入职的小张，请多关照！' },
-      { id: 3, npc: 'hr', title: '入职谈话', location: 'HR区域', dialogue: '小张，欢迎加入我们！有什么问题想问的吗？', question: 'HR问你有什么问题，你应该问什么比较合适？', hint: '询问工作流程、团队情况或发展方向', goodKeywords: ['团队', '流程', '考核', '培训', '发展', '期待'], perfectAnswer: '想了解一下团队的分工协作方式，以及对我的考核标准是什么样的？' },
-      { id: 4, npc: 'colleague', title: '请教问题', location: '工位区', dialogue: '这个表格怎么做啊？数据透视表我不太熟...', question: '你不太会用数据透视表，需要向同事请教，你应该怎么说？', hint: '礼貌请教，说明具体问题，请求演示', goodKeywords: ['请问', '方便', '请教', '能不能', '帮忙', '学习'], perfectAnswer: '王哥，方便的话能教我一下数据透视表吗？我看您之前做过，想学习一下。' },
-      { id: 5, npc: 'boss', title: '日报汇报', location: '经理办公室', dialogue: '今天的日报呢？', question: '领导问你日报交了没，你应该如何回答并说明今日工作？', hint: '主动汇报，用结构化方式说明工作内容', goodKeywords: ['已完成', '今天做了', '总结', '进展', '计划'], perfectAnswer: '经理，日报已提交。今天完成了用户调研报告初稿，下午参加了需求评审会，明天计划开始原型设计。' },
-      { id: 6, npc: 'client', title: '需求沟通', location: '会议室', dialogue: '这个功能太复杂了，我要简单一点的！', question: '客户觉得功能太复杂，你怎么解释并引导？', hint: '理解需求，说明复杂度原因，提供简化方案', goodKeywords: ['理解', '核心需求', '方案', '简化', '分阶段'], perfectAnswer: '王总，我理解您希望操作简便。我们的建议是...这样既能满足核心需求，又便于操作。' },
-      { id: 7, npc: 'boss', title: '项目汇报', location: '经理办公室', dialogue: '项目进度怎么样了？', question: '项目遇到了一些问题，进度可能延期，你该如何汇报？', hint: '先说结论，再分析原因，最后提出解决方案', goodKeywords: ['目前进度', '预计延期', '原因', '方案', '需要支持'], perfectAnswer: '经理，项目预计延期3天。原因是大客户临时加了需求。我们已加班赶工，我的方案是...需要您协调一下资源。' },
-      { id: 8, npc: 'hr', title: '绩效面谈', location: 'HR区域', dialogue: '你的季度绩效评了B+，说说你的想法？', question: '你对绩效结果有疑问，想和HR沟通，应该如何表达？', hint: '先感谢，再谦虚询问，最后表达期望', goodKeywords: ['感谢', '想了解', '期望', '提升', '建议'], perfectAnswer: '感谢公司的评估。我想了解一下具体是哪方面还有提升空间？未来我希望能够...' },
-      { id: 9, npc: 'peer', title: '跨部门协作', location: '茶水间', dialogue: '你们能不能快点？客户催得急！', question: '其他部门催促你加快进度，你该如何沟通协调？', hint: '理解对方压力，说明现状，共同寻找解决方案', goodKeywords: ['理解', '抱歉', '现状', '一起', '协调', '解决方案'], perfectAnswer: '我理解你们也很着急。目前我们这边的情况是...我们一起想想怎么协调一下，争取按时交付。' },
-      { id: 10, npc: 'boss', title: '述职报告', location: '经理办公室', dialogue: '来，做个年终述职。', question: '年终述职，你需要汇报全年工作，应该如何组织内容？', hint: '用金字塔原理：结论先行，分点陈述，数据支撑', goodKeywords: ['今年', '主要成果', '关键数据', '贡献', '明年计划'], perfectAnswer: '今年我的核心成果是...关键数据是...我的经验是...明年计划是...' },
-      { id: 11, npc: 'client', title: '投诉处理', location: '会议室', dialogue: '你们怎么回事！等了3天了！', question: '客户非常生气地投诉，你应该如何回应？', hint: '先道歉，再说明情况，最后给出解决方案和时间承诺', goodKeywords: ['非常抱歉', '耽误', '解决方案', '承诺', '补偿'], perfectAnswer: '王总，非常抱歉给您带来不便！我了解情况后马上处理。解决方案是...预计明天下午6点前完成，给您造成的损失我们会相应补偿。' },
-      { id: 12, npc: 'boss', title: '晋升申请', location: '经理办公室', dialogue: '你想申请晋升？说说你的理由。', question: '申请晋升时，你需要向领导说明理由，应该如何表达？', hint: '用数据和成果说话，说明能力和贡献，展望未来', goodKeywords: ['我的成绩', '核心贡献', '能力提升', '未来价值'], perfectAnswer: '经理，我认为自己已达到晋升标准：1. 业绩提升30%...2. 主导了XX项目...3. 带教了2名新人...未来我可以承担更多责任。' },
-      { id: 13, npc: 'boss', title: '危机处理', location: '经理办公室', dialogue: '出事了！客户数据泄露了！', question: '突发危机事件，你需要立即向上司汇报，应该怎么做？', hint: '先说结论，再说现状和已采取措施，最后请求支持', goodKeywords: ['紧急', '情况是', '已采取措施', '需要支持'], perfectAnswer: '经理紧急汇报：客户数据泄露已发生。我们已立即切断源头、排查影响范围。需要您协调法务和公关部门。' },
-      { id: 14, npc: 'boss', title: '高管汇报', location: '会议室', dialogue: '给VP汇报一下项目情况。', question: '需要在高管面前汇报项目，你应该如何准备和表达？', hint: '结论先行，重点突出，数据说话，提出方案', goodKeywords: ['核心结论', '关键成果', '数据支撑', '风险预案', '需要的支持'], perfectAnswer: 'VP好，项目整体进展良好：核心成果是...关键数据是...主要风险是...我们的预案是...需要管理层的支持是...' }
+      { id: 1, npc: 'colleague', title: '初次见面', dialogue: '嗨，新人！我是老王，以后有什么不懂的可以问我。', question: '作为新人，你应该如何回应老王的热情招呼？', hint: '简单友好地自我介绍，表达感谢', goodKeywords: ['谢谢', '王哥', '请多指教', '很高兴认识'], perfectAnswer: '王哥好！我是新来的，以后请多指教！' },
+      { id: 2, npc: 'boss', title: '电梯相遇', dialogue: '你就是新来的？', question: '在电梯里偶遇部门经理，他问你是不是新来的，你该怎么回答？', hint: '简洁自信地介绍自己', goodKeywords: ['是的', '经理好', '报到', '请多关照'], perfectAnswer: '是的经理好！我是新入职的小张，请多关照！' },
+      { id: 3, npc: 'hr', title: '入职谈话', dialogue: '小张，欢迎加入我们！有什么问题想问的吗？', question: 'HR问你有什么问题，你应该问什么比较合适？', hint: '询问工作流程、团队情况或发展方向', goodKeywords: ['团队', '流程', '考核', '培训', '发展'], perfectAnswer: '想了解一下团队的分工协作方式，以及对我的考核标准？' },
+      { id: 4, npc: 'peer', title: '请教问题', dialogue: '这个表格怎么做啊？数据透视表我不太熟...', question: '你不太会用数据透视表，需要向同事请教，你应该怎么说？', hint: '礼貌请教，说明具体问题', goodKeywords: ['请问', '方便', '请教', '帮忙', '学习'], perfectAnswer: '王哥，方便的话能教我一下数据透视表吗？' },
+      { id: 5, npc: 'boss', title: '日报汇报', dialogue: '今天的日报呢？', question: '领导问你日报交了没，你应该如何回答并说明今日工作？', hint: '主动汇报，用结构化方式说明', goodKeywords: ['已完成', '今天做了', '总结', '进展', '计划'], perfectAnswer: '经理，日报已提交。今天完成了用户调研报告初稿...' },
+      { id: 6, npc: 'client', title: '需求沟通', dialogue: '这个功能太复杂了，我要简单一点的！', question: '客户觉得功能太复杂，你怎么解释并引导？', hint: '理解需求，说明原因，提供简化方案', goodKeywords: ['理解', '核心需求', '方案', '简化'], perfectAnswer: '王总，我理解您希望操作简便。我们的建议是...' },
+      { id: 7, npc: 'boss', title: '项目汇报', dialogue: '项目进度怎么样了？', question: '项目遇到了一些问题，进度可能延期，你该如何汇报？', hint: '先说结论，再分析原因，提出方案', goodKeywords: ['目前进度', '预计延期', '原因', '方案', '需要支持'], perfectAnswer: '经理，项目预计延期3天。原因是...我的方案是...' },
+      { id: 8, npc: 'hr', title: '绩效面谈', dialogue: '你的季度绩效评了B+，说说你的想法？', question: '你对绩效结果有疑问，想和HR沟通，应该如何表达？', hint: '先感谢，再询问，表达期望', goodKeywords: ['感谢', '想了解', '期望', '提升', '建议'], perfectAnswer: '感谢公司的评估。我想了解一下具体是哪方面还有提升空间？' },
+      { id: 9, npc: 'peer', title: '跨部门协作', dialogue: '你们能不能快点？客户催得急！', question: '其他部门催促你加快进度，你该如何沟通协调？', hint: '理解对方压力，说明现状，共同解决', goodKeywords: ['理解', '抱歉', '现状', '一起', '协调'], perfectAnswer: '我理解你们也很着急。目前的情况是...我们一起想想办法。' },
+      { id: 10, npc: 'boss', title: '述职报告', dialogue: '来，做个年终述职。', question: '年终述职，你需要汇报全年工作，应该如何组织内容？', hint: '结论先行，分点陈述，数据支撑', goodKeywords: ['今年', '主要成果', '关键数据', '贡献', '明年计划'], perfectAnswer: '今年我的核心成果是...关键数据是...明年计划是...' },
+      { id: 11, npc: 'client', title: '投诉处理', dialogue: '你们怎么回事！等了3天了！', question: '客户非常生气地投诉，你应该如何回应？', hint: '先道歉，说明情况，给出方案', goodKeywords: ['非常抱歉', '耽误', '解决方案', '承诺', '补偿'], perfectAnswer: '王总，非常抱歉给您带来不便！解决方案是...预计明天下午6点前完成。' },
+      { id: 12, npc: 'boss', title: '晋升申请', dialogue: '你想申请晋升？说说你的理由。', question: '申请晋升时，你需要向领导说明理由，应该如何表达？', hint: '用数据说话，说明能力和贡献', goodKeywords: ['我的成绩', '核心贡献', '能力提升', '未来价值'], perfectAnswer: '经理，我认为自己已达到晋升标准：1. 业绩提升30%...2. 主导了XX项目...' },
+      { id: 13, npc: 'boss', title: '危机处理', dialogue: '出事了！客户数据泄露了！', question: '突发危机事件，你需要立即向上司汇报，应该怎么做？', hint: '先说结论，再说现状和措施', goodKeywords: ['紧急', '情况是', '已采取措施', '需要支持'], perfectAnswer: '经理紧急汇报：客户数据泄露已发生。我们已立即切断源头...' },
+      { id: 14, npc: 'boss', title: '高管汇报', dialogue: '给VP汇报一下项目情况。', question: '需要在高管面前汇报项目，你应该如何准备和表达？', hint: '结论先行，重点突出，数据说话', goodKeywords: ['核心结论', '关键成果', '数据支撑', '风险预案'], perfectAnswer: 'VP好，项目整体进展良好：核心成果是...主要风险是...预案是...' }
     ];
 
     // ==================== GAME STATE ====================
 
     let gameState = {
-      player: { name: '职场新人', avatar: '👨‍💻', level: 1, exp: 0, track: 'management', titleIndex: 0 },
+      player: { x: 50, y: 85, avatar: '👨‍💻', level: 1, exp: 0, track: 'management', titleIndex: 0 },
       npcFavorability: { boss: 50, colleague: 60, hr: 70, client: 40, peer: 55 },
-      achievements: [],
-      currentQuestIndex: 0,
+      currentQuest: 0,
       completedQuests: [],
       streak: 0,
       soundEnabled: true,
-      wrongNotes: [],
-      playerPos: { x: 50, y: 85 },
-      startTime: null,
-      dialogueActive: false
+      dialogueActive: false,
+      startTime: null
     };
 
-    // ==================== SOUND ====================
+    // ==================== AUDIO ====================
 
     let audioCtx = null;
 
@@ -1308,25 +1170,25 @@
 
         switch(type) {
           case 'move':
-            osc.frequency.value = 300;
-            gain.gain.value = 0.05;
+            osc.frequency.value = 200 + Math.random() * 100;
+            gain.gain.value = 0.03;
             osc.start();
             osc.stop(audioCtx.currentTime + 0.03);
             break;
           case 'interact':
-            osc.frequency.value = 523;
+            osc.frequency.value = 440;
             gain.gain.value = 0.1;
             osc.start();
-            setTimeout(() => { osc.frequency.value = 659; }, 80);
-            setTimeout(() => { osc.frequency.value = 784; }, 160);
-            osc.stop(audioCtx.currentTime + 0.25);
+            setTimeout(() => { osc.frequency.value = 550; }, 60);
+            setTimeout(() => { osc.frequency.value = 660; }, 120);
+            osc.stop(audioCtx.currentTime + 0.2);
             break;
           case 'success':
             osc.frequency.value = 523;
             gain.gain.value = 0.1;
             osc.start();
-            setTimeout(() => { osc.frequency.value = 659; }, 100);
-            setTimeout(() => { osc.frequency.value = 784; }, 200);
+            setTimeout(() => { osc.frequency.value = 659; }, 80);
+            setTimeout(() => { osc.frequency.value = 784; }, 160);
             osc.stop(audioCtx.currentTime + 0.3);
             break;
           case 'fail':
@@ -1336,28 +1198,23 @@
             osc.stop(audioCtx.currentTime + 0.2);
             break;
           case 'levelup':
-            osc.frequency.value = 440;
-            gain.gain.value = 0.15;
+            [0, 100, 200, 300, 400].forEach((delay, i) => {
+              setTimeout(() => {
+                osc.frequency.value = 440 + i * 110;
+                gain.gain.value = 0.12;
+              }, delay);
+            });
             osc.start();
-            setTimeout(() => { osc.frequency.value = 554; }, 100);
-            setTimeout(() => { osc.frequency.value = 659; }, 200);
-            setTimeout(() => { osc.frequency.value = 880; }, 300);
-            osc.stop(audioCtx.currentTime + 0.5);
+            osc.stop(audioCtx.currentTime + 0.6);
             break;
         }
       } catch(e) {}
     }
 
-    function toggleSound() {
-      gameState.soundEnabled = !gameState.soundEnabled;
-      document.getElementById('sound-toggle').textContent = gameState.soundEnabled ? '🔊' : '🔇';
-      document.getElementById('sound-toggle').classList.toggle('muted', !gameState.soundEnabled);
-    }
-
     // ==================== GAME INIT ====================
 
     function loadGame() {
-      const saved = localStorage.getItem('pyramid_office_game_v2');
+      const saved = localStorage.getItem('pyramid_office_v3');
       if (saved) {
         gameState = JSON.parse(saved);
         return true;
@@ -1366,22 +1223,20 @@
     }
 
     function saveGame() {
-      localStorage.setItem('pyramid_office_game_v2', JSON.stringify(gameState));
+      localStorage.setItem('pyramid_office_v3', JSON.stringify(gameState));
     }
 
     function startNewGame() {
+      const selectedAvatar = document.querySelector('.avatar-choice.selected')?.dataset.avatar || '👨‍💻';
       gameState = {
-        player: { name: '职场新人', avatar: document.querySelector('.avatar-option.selected')?.dataset.avatar || '👨‍💻', level: 1, exp: 0, track: 'management', titleIndex: 0 },
+        player: { x: 50, y: 85, avatar: selectedAvatar, level: 1, exp: 0, track: 'management', titleIndex: 0 },
         npcFavorability: { boss: 50, colleague: 60, hr: 70, client: 40, peer: 55 },
-        achievements: [],
-        currentQuestIndex: 0,
+        currentQuest: 0,
         completedQuests: [],
         streak: 0,
         soundEnabled: true,
-        wrongNotes: [],
-        playerPos: { x: 50, y: 85 },
-        startTime: Date.now(),
-        dialogueActive: false
+        dialogueActive: false,
+        startTime: Date.now()
       };
       saveGame();
       showGame();
@@ -1394,84 +1249,107 @@
     function showGame() {
       document.getElementById('start-screen').style.display = 'none';
       document.getElementById('game-container').style.display = 'flex';
-      initOffice();
-      updateUI();
-      positionPlayer();
+      initWorld();
       positionNPCs();
+      updateUI();
       updateQuestList();
       setupControls();
     }
 
-    // ==================== OFFICE SETUP ====================
+    // ==================== WORLD SETUP ====================
 
-    function initOffice() {
-      const ground = document.getElementById('iso-ground');
+    function initWorld() {
+      const ground = document.getElementById('ground');
+      ground.innerHTML = '';
 
-      // Add office furniture
-      const furniture = [
-        { type: 'desk', x: 20, y: 30 },
-        { type: 'desk', x: 40, y: 30 },
-        { type: 'desk', x: 60, y: 30 },
-        { type: 'desk', x: 80, y: 30 },
-        { type: 'meeting-table', x: 15, y: 70 },
-        { type: 'plant', x: 85, y: 15 },
-        { type: 'plant', x: 10, y: 50 },
-        { type: 'sofa', x: 60, y: 60 },
-        { type: 'cooler', x: 45, y: 50 },
-        { type: 'desk', x: 70, y: 65 },
-        { type: 'desk', x: 70, y: 80 }
+      // Add dirt paths
+      const paths = [
+        { x: 45, y: 80, w: 10, h: 20 },
+        { x: 20, y: 50, w: 60, h: 8 },
+        { x: 65, y: 20, w: 8, h: 35 },
+        { x: 15, y: 65, w: 8, h: 20 }
       ];
 
-      furniture.forEach(f => {
-        const obj = createFurniture(f.type);
-        obj.style.left = f.x + '%';
-        obj.style.top = f.y + '%';
-        ground.appendChild(obj);
+      paths.forEach(p => {
+        const path = document.createElement('div');
+        path.className = 'dirt-path';
+        path.style.left = p.x + '%';
+        path.style.top = p.y + '%';
+        path.style.width = p.w + '%';
+        path.style.height = p.h + '%';
+        ground.appendChild(path);
+      });
+
+      // Add trees
+      const trees = [
+        { x: 85, y: 40 }, { x: 90, y: 55 }, { x: 8, y: 20 },
+        { x: 40, y: 10 }, { x: 55, y: 85 }, { x: 88, y: 80 }
+      ];
+
+      trees.forEach(t => {
+        const tree = document.createElement('div');
+        tree.className = 'tree';
+        tree.style.left = t.x + '%';
+        tree.style.top = t.y + '%';
+        tree.innerHTML = '<div class="tree-leaves"></div><div class="tree-trunk"></div>';
+        ground.appendChild(tree);
+      });
+
+      // Add buildings
+      BUILDINGS.forEach(b => {
+        const building = document.createElement('div');
+        building.className = b.type === 'farmhouse' ? 'building' : 'office-building';
+        building.style.left = b.x + '%';
+        building.style.top = b.y + '%';
+        building.style.width = b.w + 'px';
+        building.style.height = b.h + 'px';
+
+        const roof = document.createElement('div');
+        roof.className = 'building-roof';
+        building.appendChild(roof);
+
+        const door = document.createElement('div');
+        door.className = 'building-door';
+        door.style.left = (b.doorX || 50) + 'px';
+        building.appendChild(door);
+
+        const label = document.createElement('div');
+        label.className = 'building-label';
+        label.textContent = b.label;
+        building.appendChild(label);
+
+        ground.appendChild(building);
+      });
+
+      // Add fences
+      const fences = [
+        { x: 35, y: 75 }, { x: 38, y: 75 }, { x: 41, y: 75 },
+        { x: 60, y: 40 }, { x: 63, y: 40 }
+      ];
+
+      fences.forEach(f => {
+        const fence = document.createElement('div');
+        fence.className = 'fence';
+        fence.style.left = f.x + '%';
+        fence.style.top = f.y + '%';
+        ground.appendChild(fence);
       });
 
       // Setup mini map
       updateMiniMap();
     }
 
-    function createFurniture(type) {
-      const div = document.createElement('div');
-      div.className = `iso-object ${type}`;
-
-      if (type === 'desk') {
-        div.innerHTML = '<div class="top"></div><div class="front"></div><div class="side"></div>';
-      } else if (type === 'meeting-table') {
-        div.innerHTML = '<div class="top"></div><div class="front"></div>';
-      } else if (type === 'plant') {
-        div.innerHTML = '<div class="top"></div><div class="front"></div>';
-      } else if (type === 'sofa') {
-        div.innerHTML = '<div class="top"></div><div class="front"></div>';
-      } else if (type === 'cooler') {
-        div.innerHTML = '<div class="top"></div><div class="front"></div>';
-      }
-
-      return div;
-    }
-
     function updateMiniMap() {
       const content = document.getElementById('mini-map-content');
-      content.innerHTML = '';
+      content.innerHTML = '<div class="mini-player" id="mini-player"></div>';
 
-      // Add player dot
-      const playerDot = document.createElement('div');
-      playerDot.className = 'mini-player';
-      playerDot.id = 'mini-player';
-      playerDot.style.left = gameState.playerPos.x + '%';
-      playerDot.style.top = gameState.playerPos.y + '%';
-      content.appendChild(playerDot);
-
-      // Add NPC dots
-      Object.entries(NPC_POSITIONS).forEach(([npcId, pos]) => {
-        const npcDot = document.createElement('div');
-        npcDot.className = 'mini-npc';
-        npcDot.style.left = pos.x + '%';
-        npcDot.style.top = pos.y + '%';
-        npcDot.style.background = NPCS[npcId].color;
-        content.appendChild(npcDot);
+      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
+        const dot = document.createElement('div');
+        dot.className = 'mini-npc';
+        dot.style.left = pos.x + '%';
+        dot.style.top = pos.y + '%';
+        dot.style.background = NPCS[npcId].color;
+        content.appendChild(dot);
       });
     }
 
@@ -1479,30 +1357,25 @@
 
     function positionPlayer() {
       const player = document.getElementById('player');
-      player.textContent = gameState.player.avatar + '<div class="player-shadow"></div>';
-      player.style.left = `calc(${gameState.playerPos.x}% - 18px)`;
-      player.style.top = `calc(${gameState.playerPos.y}% - 18px)`;
+      player.style.left = `calc(${gameState.player.x}% - 16px)`;
+      player.style.top = `calc(${gameState.player.y}% - 24px)`;
 
       const miniPlayer = document.getElementById('mini-player');
       if (miniPlayer) {
-        miniPlayer.style.left = gameState.playerPos.x + '%';
-        miniPlayer.style.top = gameState.playerPos.y + '%';
+        miniPlayer.style.left = gameState.player.x + '%';
+        miniPlayer.style.top = gameState.player.y + '%';
       }
     }
 
     function positionNPCs() {
-      Object.entries(NPC_POSITIONS).forEach(([npcId, pos]) => {
-        const npcEl = document.getElementById('npc-' + npcId);
-        if (npcEl) {
-          npcEl.style.left = `calc(${pos.x}% - 16px)`;
-          npcEl.style.top = `calc(${pos.y}% - 16px)`;
-
-          // Mark as completed if quest done
-          const mission = MISSIONS.find(m => m.npc === npcId);
-          if (mission && gameState.completedQuests.includes(mission.id)) {
-            npcEl.style.opacity = '0.5';
-            npcEl.classList.remove('interactable');
-          }
+      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
+        const npc = document.getElementById('npc-' + npcId);
+        if (npc) {
+          const completed = MISSIONS.find(m => m.npc === npcId && gameState.completedQuests.includes(m.id));
+          npc.style.left = `calc(${pos.x}% - 16px)`;
+          npc.style.top = `calc(${pos.y}% - 24px)`;
+          npc.style.opacity = completed ? '0.4' : '1';
+          npc.style.pointerEvents = completed ? 'none' : 'auto';
         }
       });
     }
@@ -1510,6 +1383,7 @@
     // ==================== CONTROLS ====================
 
     const keys = {};
+    let lastMoveTime = 0;
 
     function setupControls() {
       document.addEventListener('keydown', (e) => {
@@ -1523,11 +1397,6 @@
 
         keys[e.key.toLowerCase()] = true;
         updateKeyVisual(e.key.toLowerCase(), true);
-
-        // Check for interact key
-        if (e.key.toLowerCase() === 'e') {
-          tryInteract();
-        }
       });
 
       document.addEventListener('keyup', (e) => {
@@ -1539,6 +1408,9 @@
       setInterval(() => {
         if (gameState.dialogueActive) return;
 
+        const now = Date.now();
+        if (now - lastMoveTime < 100) return;
+
         let dx = 0, dy = 0;
         if (keys['w'] || keys['arrowup']) dy = -1;
         if (keys['s'] || keys['arrowdown']) dy = 1;
@@ -1547,127 +1419,116 @@
 
         if (dx !== 0 || dy !== 0) {
           movePlayer(dx, dy);
+          lastMoveTime = now;
         }
-      }, 50);
+      }, 16);
     }
 
     function updateKeyVisual(key, active) {
-      const keyMap = { w: 'key-w', a: 'key-a', s: 'key-s', d: 'key-d' };
-      const el = document.getElementById(keyMap[key]);
+      const map = { w: 'key-w', a: 'key-a', s: 'key-s', d: 'key-d', e: 'key-e' };
+      const el = document.getElementById(map[key]);
       if (el) el.classList.toggle('active', active);
     }
 
     function movePlayer(dx, dy) {
-      const speed = 1.5;
-      gameState.playerPos.x = Math.max(5, Math.min(95, gameState.playerPos.x + dx * speed));
-      gameState.playerPos.y = Math.max(5, Math.min(95, gameState.playerPos.y + dy * speed));
+      const speed = 1.2;
+
+      // Normalize diagonal movement
+      if (dx !== 0 && dy !== 0) {
+        dx *= 0.707;
+        dy *= 0.707;
+      }
+
+      gameState.player.x = Math.max(3, Math.min(97, gameState.player.x + dx * speed));
+      gameState.player.y = Math.max(5, Math.min(95, gameState.player.y + dy * speed));
+
+      const player = document.getElementById('player');
+      player.classList.add('walking');
+      setTimeout(() => player.classList.remove('walking'), 200);
 
       playSound('move');
       positionPlayer();
       checkNearNPC();
-      updateLocation();
       saveGame();
     }
 
-    function updateLocation() {
-      const label = document.getElementById('location-label');
-      let nearestLoc = LOCATIONS[0];
-      let minDist = Infinity;
-
-      LOCATIONS.forEach(loc => {
-        const dist = Math.hypot(loc.x - gameState.playerPos.x, loc.y - gameState.playerPos.y);
-        if (dist < minDist) {
-          minDist = dist;
-          nearestLoc = loc;
-        }
-      });
-
-      if (minDist < 20) {
-        label.textContent = nearestLoc.name;
-        label.style.display = 'block';
-      } else {
-        label.style.display = 'none';
-      }
-    }
-
-    // ==================== NPC INTERACTION ====================
-
-    let nearestNPC = null;
+    let nearbyNPC = null;
 
     function checkNearNPC() {
-      const indicator = document.getElementById('npc-indicator');
-      nearestNPC = null;
+      nearbyNPC = null;
+      document.querySelectorAll('.character.npc-boss, .character.npc-colleague, .character.npc-hr, .character.npc-client, .character.npc-peer').forEach(npc => {
+        npc.classList.remove('nearby');
+      });
 
-      Object.entries(NPC_POSITIONS).forEach(([npcId, pos]) => {
-        const dist = Math.hypot(pos.x - gameState.playerPos.x, pos.y - gameState.playerPos.y);
+      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
+        if (gameState.completedQuests.includes(MISSIONS.find(m => m.npc === npcId)?.id)) return;
+
+        const dist = Math.hypot(pos.x - gameState.player.x, pos.y - gameState.player.y);
         if (dist < 12) {
-          // Check if this NPC has an available quest
-          const mission = MISSIONS.find(m => m.npc === npcId && !gameState.completedQuests.includes(m.id));
-          if (mission) {
-            nearestNPC = npcId;
-            indicator.style.display = 'block';
-            document.getElementById('indicator-text').textContent = `${NPCS[npcId].avatar} ${NPCS[npcId].name}`;
-          }
+          nearbyNPC = npcId;
+          document.getElementById('npc-' + npcId).classList.add('nearby');
         }
       });
 
-      if (!nearestNPC) {
-        indicator.style.display = 'none';
+      // Auto-interact prompt
+      if (keys['e']) {
+        tryInteract();
+        keys['e'] = false;
       }
     }
 
     function tryInteract() {
-      if (nearestNPC) {
-        interactNPC(nearestNPC);
+      if (nearbyNPC) {
+        interactNPC(nearbyNPC);
       }
     }
 
-    function interactNPC(npcId) {
-      playSound('interact');
+    // ==================== DIALOGUE ====================
 
+    function interactNPC(npcId) {
       const mission = MISSIONS.find(m => m.npc === npcId && !gameState.completedQuests.includes(m.id));
       if (!mission) {
-        // Already completed, just show a message
-        alert(`${NPCS[npcId].name}：我们之前聊过了，有事再找我！`);
+        // Already done
+        alert(`${NPCS[npcId].name}：我们聊过了，有事再找我！`);
         return;
       }
 
-      gameState.currentQuestIndex = MISSIONS.indexOf(mission);
-      gameState.startTime = Date.now();
+      playSound('interact');
       gameState.dialogueActive = true;
+      gameState.currentQuest = MISSIONS.indexOf(mission);
+      gameState.startTime = Date.now();
 
       const npc = NPCS[npcId];
       document.getElementById('dialogue-avatar').textContent = npc.avatar;
-      document.getElementById('dialogue-npc-name').textContent = npc.name;
-      document.getElementById('dialogue-npc-name').style.color = npc.color;
-      document.getElementById('dialogue-scene-title').textContent = `📋 任务：${mission.title}`;
-      document.getElementById('dialogue-npc-text').textContent = mission.dialogue;
+      document.getElementById('dialogue-name').textContent = npc.name;
+      document.getElementById('dialogue-name').style.color = npc.color;
+      document.getElementById('dialogue-scene').textContent = `📋 任务：${mission.title}`;
+      document.getElementById('dialogue-text').textContent = mission.dialogue;
       document.getElementById('dialogue-question').textContent = mission.question;
       document.getElementById('dialogue-input').value = '';
-      document.getElementById('dialogue-npc-status').textContent = '正在等待你的回答...';
+
+      const locations = { boss: '经理办公室', colleague: '工位区', hr: 'HR区域', client: '会议室', peer: '茶水间' };
+      document.getElementById('dialogue-location').textContent = locations[npcId] || '';
 
       document.getElementById('dialogue-modal').style.display = 'flex';
       document.getElementById('dialogue-input').focus();
     }
 
-    function showDialogueHint() {
-      const mission = MISSIONS[gameState.currentQuestIndex];
+    function showHint() {
+      const mission = MISSIONS[gameState.currentQuest];
       alert('💡 提示：' + mission.hint);
     }
-
-    // ==================== ANSWER SUBMISSION ====================
 
     function submitDialogue() {
       const answer = document.getElementById('dialogue-input').value.trim();
       if (!answer) {
-        document.getElementById('dialogue-input').classList.add('shake');
-        setTimeout(() => document.getElementById('dialogue-input').classList.remove('shake'), 300);
+        document.getElementById('dialogue-input').style.animation = 'shake 0.3s';
+        setTimeout(() => document.getElementById('dialogue-input').style.animation = '', 300);
         return;
       }
 
-      const mission = MISSIONS[gameState.currentQuestIndex];
+      const mission = MISSIONS[gameState.currentQuest];
       const result = analyzeAnswer(answer, mission);
-
       showResult(result, mission);
     }
 
@@ -1700,7 +1561,7 @@
 
     function showResult(result, mission) {
       document.getElementById('dialogue-modal').style.display = 'none';
-      document.getElementById('result-overlay').style.display = 'flex';
+      document.getElementById('result-modal').style.display = 'flex';
 
       const npc = NPCS[mission.npc];
 
@@ -1709,8 +1570,8 @@
 
       // Grade
       let grade, gradeClass;
-      if (result.score >= 90) { grade = 'S级 · 完美！'; gradeClass = 's'; playSound('success'); }
-      else if (result.score >= 80) { grade = 'A级 · 优秀！'; gradeClass = 'a'; playSound('success'); }
+      if (result.score >= 90) { grade = 'S级 · 完美!'; gradeClass = 's'; playSound('success'); }
+      else if (result.score >= 80) { grade = 'A级 · 优秀!'; gradeClass = 'a'; playSound('success'); }
       else if (result.score >= 60) { grade = 'B级 · 良好'; gradeClass = 'b'; }
       else if (result.score >= 40) { grade = 'C级 · 合格'; gradeClass = 'c'; }
       else { grade = 'D级 · 需改进'; gradeClass = 'd'; playSound('fail'); }
@@ -1742,7 +1603,7 @@
       let achievement = '';
       if (gameState.completedQuests.length === 0) achievement = '初次冒险';
       else if (result.score >= 90) achievement = '完美表达';
-      else if (gameState.streak >= 3) achievement = `🔥 ${gameState.streak}连击！`;
+      else if (gameState.streak >= 3) achievement = `🔥 ${gameState.streak}连击!`;
       document.getElementById('result-achievement').textContent = achievement;
 
       // Feedback
@@ -1755,7 +1616,7 @@
       } else {
         feedback = npc.name === '严厉上司' ? '太差了，回去重练。' : '没关系，多练习就好了。';
       }
-      document.getElementById('result-feedback-text').textContent = feedback;
+      document.getElementById('result-feedback').textContent = feedback;
 
       // Update state
       const oldLevel = gameState.player.level;
@@ -1768,7 +1629,7 @@
     }
 
     function closeResult() {
-      document.getElementById('result-overlay').style.display = 'none';
+      document.getElementById('result-modal').style.display = 'none';
       gameState.dialogueActive = false;
       positionNPCs();
       updateQuestList();
@@ -1778,11 +1639,11 @@
     function goToNextQuest() {
       closeResult();
 
-      // Find next available quest
       const nextMission = MISSIONS.find(m => !gameState.completedQuests.includes(m.id));
       if (nextMission) {
-        const pos = NPC_POSITIONS[nextMission.npc];
-        gameState.playerPos = { x: pos.x, y: pos.y + 15 };
+        const pos = NPC_START_POS[nextMission.npc];
+        gameState.player.x = pos.x;
+        gameState.player.y = pos.y + 12;
         positionPlayer();
       }
     }
@@ -1798,10 +1659,11 @@
 
       if (gameState.player.level > oldLevel) {
         playSound('levelup');
-        const overlay = document.getElementById('level-up-overlay');
-        document.getElementById('level-up-text').textContent = `恭喜你升到 Lv.${gameState.player.level}！`;
-        overlay.style.display = 'block';
-        setTimeout(() => { overlay.style.display = 'none'; }, 3000);
+        document.getElementById('level-up-text').textContent = `恭喜你升到 Lv.${gameState.player.level}!`;
+        document.getElementById('level-up-overlay').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('level-up-overlay').style.display = 'none';
+        }, 2500);
       }
     }
 
@@ -1809,23 +1671,9 @@
 
     function updateUI() {
       const titles = gameState.player.track === 'management' ? MANAGEMENT_TITLES : PROFESSIONAL_TITLES;
-      const title = titles[gameState.player.titleIndex];
-
       document.getElementById('level-display').textContent = 'Lv.' + gameState.player.level;
-      document.getElementById('title-display').textContent = title;
+      document.getElementById('title-display').textContent = titles[gameState.player.titleIndex];
       document.getElementById('streak-display').textContent = gameState.streak;
-
-      const currentLevelExp = LEVEL_EXP[gameState.player.level - 1] || 0;
-      const nextLevelExp = LEVEL_EXP[gameState.player.level] || LEVEL_EXP[LEVEL_EXP.length - 1];
-      const expPercent = ((gameState.player.exp - currentLevelExp) / (nextLevelExp - currentLevelExp)) * 100;
-      document.getElementById('exp-fill').style.width = Math.min(100, expPercent) + '%';
-
-      // Status panel
-      document.getElementById('status-level').textContent = 'Lv.' + gameState.player.level;
-      document.getElementById('status-title').textContent = title;
-      document.getElementById('status-exp').textContent = gameState.player.exp;
-      document.getElementById('status-track').textContent = gameState.player.track === 'management' ? '管理序列' : '专业序列';
-      document.getElementById('status-streak').textContent = gameState.streak;
     }
 
     function updateQuestList() {
@@ -1833,39 +1681,33 @@
       container.innerHTML = '';
 
       const showCount = 5;
-      const start = Math.max(0, gameState.currentQuestIndex - 2);
+      const start = Math.max(0, gameState.currentQuest - 2);
 
       MISSIONS.slice(start, start + showCount).forEach((mission, i) => {
-        const chip = document.createElement('div');
         const actualIndex = start + i;
-        chip.className = 'quest-chip';
+        const item = document.createElement('div');
+        item.className = 'quest-item';
 
         if (gameState.completedQuests.includes(mission.id)) {
-          chip.classList.add('completed');
-          chip.innerHTML = `✅ ${mission.title}`;
-        } else if (actualIndex === gameState.currentQuestIndex) {
-          chip.classList.add('current');
-          chip.innerHTML = `🎯 ${mission.title}`;
+          item.classList.add('completed');
+          item.innerHTML = '<span class="quest-icon">✅</span> ' + mission.title;
+        } else if (actualIndex === gameState.currentQuest) {
+          item.classList.add('current');
+          item.innerHTML = '<span class="quest-icon">🎯</span> ' + mission.title;
         } else {
-          chip.innerHTML = `○ ${mission.title}`;
+          item.innerHTML = '<span class="quest-icon">○</span> ' + mission.title;
         }
 
-        container.appendChild(chip);
+        container.appendChild(item);
       });
-    }
-
-    function toggleStatusPanel() {
-      const panel = document.getElementById('status-panel');
-      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
     }
 
     // ==================== AVATAR SELECT ====================
 
-    document.querySelectorAll('.avatar-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        playSound('click');
+    document.querySelectorAll('.avatar-choice').forEach(choice => {
+      choice.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-choice').forEach(c => c.classList.remove('selected'));
+        choice.classList.add('selected');
       });
     });
 
@@ -1874,10 +1716,6 @@
     window.onload = function() {
       if (loadGame()) {
         document.getElementById('continue-btn').style.display = 'block';
-      }
-      if (!gameState.soundEnabled) {
-        document.getElementById('sound-toggle').textContent = '🔇';
-        document.getElementById('sound-toggle').classList.add('muted');
       }
     };
 
