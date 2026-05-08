@@ -10,418 +10,111 @@
 
     body {
       font-family: 'Noto Sans SC', sans-serif;
-      background: #5c3a21;
+      background: #1a1a2e;
       min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Game Canvas Container */
+    #game-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
     }
 
-    /* Pixel art scale */
-    .pixel-scale { image-rendering: pixelated; }
-
-    /* Game Container */
-    .game-container {
-      max-width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 50%, #7CB342 100%);
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
-    /* Header Bar - Stardew Style */
-    .game-header {
+    /* UI Overlay */
+    .ui-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 48px;
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border-bottom: 4px solid #3d2817;
+      top: 0;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Top Bar */
+    .top-bar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      z-index: 100;
-      box-shadow: 0 4px 0 #3d2817;
+      align-items: flex-start;
+      padding: 16px;
+      pointer-events: auto;
+    }
+
+    /* Wooden Panel Style */
+    .wooden-panel {
+      background: linear-gradient(180deg, #c4a574 0%, #a67c52 50%, #8b6342 100%);
+      border: 4px solid #5c3d2e;
+      border-radius: 8px;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.3),
+        inset 0 -2px 0 rgba(0,0,0,0.3),
+        0 4px 8px rgba(0,0,0,0.4);
+      padding: 12px 16px;
     }
 
     .game-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
-      color: #f4d03f;
-      text-shadow: 2px 2px 0 #3d2817;
+      font-size: 14px;
+      color: #fff;
+      text-shadow: 2px 2px 0 #5c3d2e;
     }
 
-    .header-stats {
+    .player-stats {
       display: flex;
-      gap: 16px;
+      gap: 12px;
+      align-items: center;
     }
 
-    .header-stat {
+    .stat-box {
       display: flex;
       align-items: center;
       gap: 6px;
       background: rgba(0,0,0,0.3);
-      padding: 4px 12px;
+      padding: 6px 10px;
       border-radius: 4px;
-      border: 2px solid #3d2817;
+      border: 2px solid #5c3d2e;
     }
 
-    .header-stat-icon { font-size: 14px; }
-    .header-stat-value {
+    .stat-icon { font-size: 14px; }
+
+    .stat-value {
       font-family: 'Press Start 2P', cursive;
-      font-size: 8px;
-      color: #fff;
-    }
-
-    /* Game World */
-    .game-world {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      margin-top: 48px;
-    }
-
-    /* Ground */
-    .ground {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background:
-        repeating-linear-gradient(90deg, transparent 0px, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px),
-        repeating-linear-gradient(0deg, transparent 0px, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px),
-        linear-gradient(180deg, #7CB342 0%, #558B2F 100%);
-    }
-
-    /* Dirt Path */
-    .dirt-path {
-      position: absolute;
-      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
-      border: 3px solid #5d4037;
-    }
-
-    /* Buildings */
-    .building {
-      position: absolute;
-      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
-      border: 4px solid #5d4037;
-      box-shadow: inset -8px 0 0 rgba(0,0,0,0.1);
-    }
-
-    .building-roof {
-      position: absolute;
-      top: -30px;
-      left: -10px;
-      right: -10px;
-      height: 40px;
-      background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    }
-
-    .building-door {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 60px;
-      background: linear-gradient(180deg, #5d4037 0%, #3e2723 100%);
-      border: 3px solid #3e2723;
-      border-bottom: none;
-    }
-
-    .building-window {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: linear-gradient(180deg, #81d4fa 0%, #4fc3f7 100%);
-      border: 3px solid #5d4037;
-    }
-
-    .building-label {
-      position: absolute;
-      bottom: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(93, 64, 55, 0.9);
-      padding: 2px 8px;
-      border-radius: 4px;
       font-size: 10px;
       color: #fff;
-      white-space: nowrap;
-      border: 2px solid #3d2817;
     }
 
-    /* Office Interior Buildings */
-    .office-building {
-      position: absolute;
-      background: linear-gradient(180deg, #90a4ae 0%, #78909c 100%);
-      border: 4px solid #546e7a;
-      box-shadow: inset -8px 0 0 rgba(0,0,0,0.1);
-    }
-
-    .office-building .building-roof {
-      background: linear-gradient(180deg, #455a64 0%, #263238 100%);
-    }
-
-    .office-building .building-door {
-      background: linear-gradient(180deg, #607d8b 0%, #455a64 100%);
-    }
-
-    /* Trees */
-    .tree {
-      position: absolute;
-    }
-
-    .tree-trunk {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 16px;
-      height: 40px;
-      background: linear-gradient(90deg, #6d4c41 0%, #8d6e63 50%, #6d4c41 100%);
-      border: 2px solid #5d4037;
-    }
-
-    .tree-leaves {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 64px;
-      height: 64px;
-      background: radial-gradient(ellipse at center, #4caf50 0%, #2e7d32 70%, transparent 70%);
-      border-radius: 50%;
-    }
-
-    /* Fences */
-    .fence {
-      position: absolute;
-      height: 32px;
-      width: 16px;
-      background: linear-gradient(90deg, #a1887f 0%, #8d6e63 50%, #a1887f 100%);
-      border: 2px solid #6d4c41;
-    }
-
-    .fence::before {
-      content: '';
-      position: absolute;
-      top: -12px;
-      left: -2px;
-      width: 16px;
-      height: 12px;
-      background: linear-gradient(90deg, #a1887f 0%, #8d6e63 50%, #a1887f 100%);
-      border: 2px solid #6d4c41;
-      border-radius: 4px 4px 0 0;
-    }
-
-    /* Characters - Stardew Style */
-    .character {
-      position: absolute;
-      width: 32px;
-      height: 48px;
-      cursor: pointer;
-      transition: left 0.15s linear, top 0.15s linear;
-      z-index: 50;
-    }
-
-    .character-body {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      animation: characterBob 0.6s ease-in-out infinite;
-    }
-
-    @keyframes characterBob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-2px); }
-    }
-
-    .character.walking .character-body {
-      animation: characterWalk 0.2s steps(2) infinite;
-    }
-
-    @keyframes characterWalk {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-
-    /* Character pixel art using box-shadow */
-    .char-sprite {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: transparent;
-    }
-
-    /* Player sprite - blue shirt */
-    .player-sprite {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .player-sprite::before {
-      content: '';
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #ffcc80;
-      box-shadow:
-        /* Hair */
-        -8px -28px 0 #5d4037, -4px -28px 0 #5d4037, 0px -28px 0 #5d4037, 4px -28px 0 #5d4037, 8px -28px 0 #5d4037,
-        -8px -24px 0 #5d4037, -4px -24px 0 #5d4037, 0px -24px 0 #5d4037, 4px -24px 0 #5d4037, 8px -24px 0 #5d4037,
-        /* Face */
-        -4px -20px 0 #ffcc80, 4px -20px 0 #ffcc80,
-        -4px -16px 0 #ffcc80, 0px -16px 0 #5d4037, 4px -16px 0 #ffcc80,
-        /* Body (blue shirt) */
-        -8px -12px 0 #1976d2, -4px -12px 0 #1976d2, 0px -12px 0 #1976d2, 4px -12px 0 #1976d2, 8px -12px 0 #1976d2,
-        -8px -8px 0 #1976d2, -4px -8px 0 #1976d2, 0px -8px 0 #1976d2, 4px -8px 0 #1976d2, 8px -8px 0 #1976d2,
-        -8px -4px 0 #1565c0, -4px -4px 0 #1565c0, 0px -4px 0 #1565c0, 4px -4px 0 #1565c0, 8px -4px 0 #1565c0,
-        /* Legs (brown pants) */
-        -4px 0px 0 #6d4c41, 4px 0px 0 #6d4c41,
-        -4px 4px 0 #5d4037, 4px 4px 0 #5d4037;
-    }
-
-    /* Shadow */
-    .character-shadow {
-      position: absolute;
-      bottom: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 8px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 50%;
-    }
-
-    /* NPC indicator */
-    .character .indicator {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 8px;
-      font-family: 'Press Start 2P', cursive;
-      color: #fff;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.2s;
-      border: 1px solid #fff;
-    }
-
-    .character:hover .indicator,
-    .character.nearby .indicator {
-      opacity: 1;
-    }
-
-    /* NPC specific colors */
-    .character.npc-boss .indicator { color: #e74c3c; border-color: #e74c3c; }
-    .character.npc-colleague .indicator { color: #3498db; border-color: #3498db; }
-    .character.npc-hr .indicator { color: #9b59b6; border-color: #9b59b6; }
-    .character.npc-client .indicator { color: #f39c12; border-color: #f39c12; }
-    .character.npc-peer .indicator { color: #27ae60; border-color: #27ae60; }
-
-    /* Interaction prompt */
-    .interact-prompt {
-      position: absolute;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #f4d03f;
-      color: #3d2817;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 8px;
-      font-family: 'Press Start 2P', cursive;
-      display: none;
-      border: 2px solid #3d2817;
-      box-shadow: 2px 2px 0 #3d2817;
-    }
-
-    .character.nearby .interact-prompt {
-      display: block;
-      animation: promptBounce 0.5s ease-in-out infinite;
-    }
-
-    @keyframes promptBounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-4px); }
-    }
-
-    /* Mini Map */
-    .mini-map {
+    /* Quest Panel */
+    .quest-panel {
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border: 4px solid #3d2817;
-      border-radius: 8px;
-      padding: 8px;
-      z-index: 100;
-      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
-    }
-
-    .mini-map-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 6px;
-      color: #f4d03f;
-      text-align: center;
-      margin-bottom: 6px;
-      padding-bottom: 4px;
-      border-bottom: 2px solid #5d4037;
-    }
-
-    .mini-map-content {
-      width: 120px;
-      height: 80px;
-      background: #558B2F;
-      border: 2px solid #3d2817;
-      position: relative;
-    }
-
-    .mini-player {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #1976d2;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      border: 1px solid #fff;
-    }
-
-    .mini-npc {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* Quest Tracker */
-    .quest-tracker {
-      position: fixed;
-      top: 60px;
+      top: 80px;
       left: 16px;
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border: 4px solid #3d2817;
-      border-radius: 8px;
-      padding: 12px;
-      min-width: 180px;
-      z-index: 100;
-      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      min-width: 200px;
+      pointer-events: auto;
     }
 
     .quest-title {
       font-family: 'Press Start 2P', cursive;
       font-size: 8px;
-      color: #f4d03f;
-      margin-bottom: 8px;
+      color: #fff;
+      margin-bottom: 10px;
       padding-bottom: 6px;
-      border-bottom: 2px solid #5d4037;
+      border-bottom: 2px solid #5c3d2e;
+      text-shadow: 1px 1px 0 #5c3d2e;
     }
 
     .quest-item {
@@ -430,160 +123,221 @@
       gap: 8px;
       padding: 4px 0;
       font-size: 11px;
-      color: #d7ccc8;
+      color: #2d1b0e;
     }
 
-    .quest-item.completed { color: #4caf50; text-decoration: line-through; }
-    .quest-item.current { color: #f4d03f; }
-    .quest-icon { font-size: 12px; }
+    .quest-item.completed { color: #558b2f; text-decoration: line-through; }
+    .quest-item.current { color: #fff; font-weight: bold; }
 
-    /* Controls */
+    /* Mini Map */
+    .mini-map {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      pointer-events: auto;
+    }
+
+    .mini-map-content {
+      width: 140px;
+      height: 100px;
+      background: #558b2f;
+      border: 3px solid #33691e;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Controls Panel */
     .controls-panel {
       position: fixed;
       bottom: 16px;
       left: 16px;
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border: 4px solid #3d2817;
-      border-radius: 8px;
-      padding: 12px;
-      z-index: 100;
-      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      pointer-events: auto;
     }
 
     .controls-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 6px;
-      color: #f4d03f;
+      font-size: 7px;
+      color: #fff;
       margin-bottom: 8px;
       text-align: center;
     }
 
     .key-grid {
       display: grid;
-      grid-template-columns: repeat(3, 28px);
+      grid-template-columns: repeat(3, 32px);
       gap: 4px;
     }
 
     .key {
-      width: 28px;
-      height: 28px;
-      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
-      border: 2px solid #8d6e63;
-      border-bottom-width: 4px;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(180deg, #e8d5b7 0%, #c4a574 100%);
+      border: 3px solid #8b6342;
+      border-bottom-width: 5px;
       border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Press Start 2P', cursive;
-      font-size: 8px;
-      color: #3d2817;
+      font-size: 10px;
+      color: #5c3d2e;
+      transition: all 0.1s;
     }
 
     .key.active {
-      background: linear-gradient(180deg, #fff 0%, #d7ccc8 100%);
-      border-bottom-width: 2px;
+      background: linear-gradient(180deg, #fff 0%, #e8d5b7 100%);
+      border-bottom-width: 3px;
       transform: translateY(2px);
     }
 
     .key.e-key {
-      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
+      background: linear-gradient(180deg, #ffd54f 0%, #ffb300 100%);
+      width: 100%;
+      grid-column: span 3;
     }
 
-    /* Dialogue Modal - Stardew Style */
+    /* NPC Interact Indicator */
+    .interact-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
+    }
+
+    .interact-box {
+      background: rgba(0,0,0,0.85);
+      border: 3px solid #ffd54f;
+      border-radius: 8px;
+      padding: 16px 24px;
+      text-align: center;
+      animation: interactPulse 0.8s ease-in-out infinite;
+    }
+
+    @keyframes interactPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,213,79,0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,213,79,0.6); }
+    }
+
+    .interact-name {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .interact-hint {
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    .interact-hint kbd {
+      background: #ffd54f;
+      color: #333;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+    }
+
+    /* Dialogue Modal */
     .dialogue-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 500;
+      z-index: 100;
+      pointer-events: auto;
     }
 
     .dialogue-box {
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border: 6px solid #3d2817;
+      background: linear-gradient(180deg, #c4a574 0%, #a67c52 50%, #8b6342 100%);
+      border: 6px solid #5c3d2e;
       border-radius: 12px;
-      padding: 20px;
-      max-width: 500px;
+      max-width: 520px;
       width: 90%;
-      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      overflow: hidden;
     }
 
     .dialogue-header {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 16px;
+      padding: 16px;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 4px solid #5c3d2e;
     }
 
     .dialogue-portrait {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
-      border: 4px solid #3d2817;
+      width: 72px;
+      height: 72px;
+      border: 4px solid #5c3d2e;
       border-radius: 8px;
+      background: #8b6342;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 48px;
-      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.1);
+      font-size: 40px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    .dialogue-info {
-      flex: 1;
-    }
+    .dialogue-info { flex: 1; }
 
     .dialogue-name {
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 4px;
+      color: #2d1b0e;
     }
 
     .dialogue-location {
       font-size: 12px;
-      color: #a1887f;
+      color: #5c3d2e;
     }
 
     .dialogue-scene {
-      background: rgba(0,0,0,0.3);
+      margin: 12px 16px;
       padding: 8px 12px;
+      background: rgba(0,0,0,0.25);
       border-radius: 6px;
-      margin-bottom: 12px;
       font-size: 11px;
-      color: #f4d03f;
-      border: 2px solid #5d4037;
+      color: #2d1b0e;
+      border: 2px solid #5c3d2e;
     }
 
     .dialogue-content {
-      background: rgba(255,255,255,0.1);
-      border: 3px solid #5d4037;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 0 16px 16px;
     }
 
     .dialogue-npc-text {
+      background: rgba(255,255,255,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
       font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 12px;
-      color: #fff;
+      color: #2d1b0e;
+      border: 2px solid #5c3d2e;
     }
 
     .dialogue-question {
-      font-size: 13px;
-      color: #4fc3f7;
-      padding: 10px;
-      background: rgba(79, 195, 247, 0.15);
+      background: rgba(79,195,247,0.3);
+      padding: 10px 12px;
       border-left: 4px solid #4fc3f7;
       border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #1565c0;
+      margin-bottom: 12px;
     }
 
     .dialogue-input {
       width: 100%;
       min-height: 80px;
-      background: linear-gradient(180deg, #3e2723 0%, #2d1b18 100%);
-      border: 3px solid #5d4037;
+      background: linear-gradient(180deg, #4a3728 0%, #2d1b0e 100%);
+      border: 3px solid #5c3d2e;
       border-radius: 6px;
       padding: 12px;
       color: #fff;
@@ -594,7 +348,7 @@
 
     .dialogue-input:focus {
       outline: none;
-      border-color: #f4d03f;
+      border-color: #ffd54f;
     }
 
     .dialogue-buttons {
@@ -606,7 +360,7 @@
     .dialogue-btn {
       flex: 1;
       padding: 10px;
-      border: 3px solid #5d4037;
+      border: 3px solid #5c3d2e;
       border-bottom-width: 5px;
       border-radius: 6px;
       font-family: 'Press Start 2P', cursive;
@@ -616,76 +370,79 @@
     }
 
     .dialogue-btn:active {
-      border-bottom-width: 3px;
-      transform: translateY(2px);
+      border-bottom-width: 2px;
+      transform: translateY(3px);
     }
 
     .dialogue-btn.primary {
-      background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
+      background: linear-gradient(180deg, #66bb6a 0%, #43a047 100%);
       color: #fff;
     }
 
     .dialogue-btn.hint {
       background: linear-gradient(180deg, #ffb74d 0%, #f57c00 100%);
-      color: #3d2817;
+      color: #2d1b0e;
     }
 
     /* Result Modal */
     .result-modal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 600;
+      z-index: 200;
+      pointer-events: auto;
     }
 
     .result-box {
-      background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
-      border: 6px solid #3d2817;
+      background: linear-gradient(180deg, #c4a574 0%, #a67c52 50%, #8b6342 100%);
+      border: 6px solid #5c3d2e;
       border-radius: 16px;
       padding: 32px;
       text-align: center;
-      min-width: 320px;
-      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+      min-width: 340px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
 
     .result-score {
       font-family: 'Press Start 2P', cursive;
-      font-size: 48px;
-      margin-bottom: 8px;
+      font-size: 56px;
+      margin-bottom: 4px;
+      text-shadow: 3px 3px 0 #5c3d2e;
     }
 
     .result-grade {
-      font-size: 18px;
+      font-size: 20px;
       margin-bottom: 20px;
       font-weight: bold;
+      color: #2d1b0e;
     }
 
-    .result-grade.s { color: #f4d03f; }
-    .result-grade.a { color: #4caf50; }
+    .result-grade.s { color: #ffd54f; text-shadow: 2px 2px 0 #f57c00; }
+    .result-grade.a { color: #66bb6a; }
     .result-grade.b { color: #4fc3f7; }
     .result-grade.c { color: #ffb74d; }
-    .result-grade.d { color: #e74c3c; }
+    .result-grade.d { color: #ef5350; }
 
     .result-stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
     .result-stat {
-      background: rgba(0,0,0,0.3);
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid #5d4037;
+      background: rgba(0,0,0,0.25);
+      padding: 10px;
+      border-radius: 6px;
+      border: 2px solid #5c3d2e;
     }
 
     .result-stat-label {
-      font-size: 10px;
-      color: #a1887f;
+      font-size: 9px;
+      color: #5c3d2e;
       margin-bottom: 4px;
     }
 
@@ -694,95 +451,95 @@
       font-size: 14px;
     }
 
-    .result-stat-value.positive { color: #4caf50; }
-    .result-stat-value.negative { color: #e74c3c; }
+    .result-stat-value.positive { color: #66bb6a; }
+    .result-stat-value.negative { color: #ef5350; }
 
     .result-feedback {
-      background: rgba(0,0,0,0.3);
-      padding: 16px;
+      background: rgba(0,0,0,0.25);
+      padding: 12px;
       border-radius: 8px;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
       text-align: left;
-      border: 2px solid #5d4037;
+      border: 2px solid #5c3d2e;
     }
 
-    .result-feedback-avatar {
-      font-size: 36px;
-    }
+    .result-feedback-avatar { font-size: 32px; }
 
     .result-feedback-text {
       font-size: 13px;
-      color: #fff;
+      color: #2d1b0e;
     }
 
     .result-buttons {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
 
     .result-btn {
       flex: 1;
-      padding: 12px;
-      border: 3px solid #5d4037;
+      padding: 10px;
+      border: 3px solid #5c3d2e;
       border-bottom-width: 5px;
       border-radius: 6px;
       font-family: 'Press Start 2P', cursive;
       font-size: 8px;
       cursor: pointer;
-      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
+      background: linear-gradient(180deg, #a67c52 0%, #8b6342 100%);
       color: #fff;
       transition: all 0.1s;
     }
 
     .result-btn:active {
-      border-bottom-width: 3px;
-      transform: translateY(2px);
+      border-bottom-width: 2px;
+      transform: translateY(3px);
     }
 
     .result-btn.primary {
       background: linear-gradient(180deg, #4fc3f7 0%, #0288d1 100%);
     }
 
-    /* Level Up */
+    /* Level Up Overlay */
     .level-up-overlay {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
-      border: 6px solid #3d2817;
+      background: linear-gradient(180deg, #ffd54f 0%, #ffb300 100%);
+      border: 6px solid #f57c00;
       border-radius: 16px;
       padding: 32px 48px;
       text-align: center;
-      z-index: 800;
+      z-index: 300;
       display: none;
-      box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .level-up-icon {
+      font-size: 72px;
+      margin-bottom: 12px;
+      animation: starSpin 0.8s linear infinite;
+    }
+
+    @keyframes starSpin {
+      from { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.2); }
+      to { transform: rotate(360deg) scale(1); }
     }
 
     .level-up-title {
       font-family: 'Press Start 2P', cursive;
       font-size: 20px;
-      color: #3d2817;
-      margin-bottom: 16px;
-    }
-
-    .level-up-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      animation: starSpin 1s linear infinite;
-    }
-
-    @keyframes starSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      color: #e65100;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 0 #fff;
     }
 
     .level-up-text {
       font-size: 14px;
-      color: #3d2817;
+      color: #bf360c;
       font-weight: bold;
     }
 
@@ -790,33 +547,35 @@
     .start-screen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 40%, #7CB342 100%);
+      background: linear-gradient(180deg, #87ceeb 0%, #98d8c8 40%, #7cb342 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 900;
+      z-index: 500;
     }
 
     .start-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 24px;
-      color: #3d2817;
-      text-shadow: 4px 4px 0 #f4d03f, -2px -2px 0 #8B4513;
+      font-size: 28px;
+      color: #2d1b0e;
+      text-shadow: 4px 4px 0 #c4a574, -2px -2px 0 #fff;
       text-align: center;
-      margin-bottom: 16px;
-      animation: titleBounce 1s ease-in-out infinite;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      animation: titleBounce 1.2s ease-in-out infinite;
     }
 
     @keyframes titleBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
     }
 
     .start-subtitle {
-      font-size: 12px;
-      color: #5d4037;
+      font-size: 11px;
+      color: #5c3d2e;
       margin-bottom: 40px;
+      letter-spacing: 4px;
     }
 
     .start-avatar-section {
@@ -826,7 +585,7 @@
 
     .start-avatar-section p {
       font-size: 14px;
-      color: #3d2817;
+      color: #2d1b0e;
       margin-bottom: 16px;
     }
 
@@ -836,34 +595,37 @@
     }
 
     .avatar-choice {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(180deg, #d7ccc8 0%, #bcaaa4 100%);
-      border: 4px solid #5d4037;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(180deg, #e8d5b7 0%, #c4a574 100%);
+      border: 4px solid #8b6342;
+      border-bottom-width: 8px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 32px;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 4px 4px 0 #3d2817;
+      transition: all 0.15s;
+      box-shadow: 0 4px 0 #5c3d2e;
     }
 
     .avatar-choice:hover {
       transform: translateY(-4px);
-      box-shadow: 4px 8px 0 #3d2817;
+      box-shadow: 0 8px 0 #5c3d2e;
     }
 
     .avatar-choice.selected {
-      background: linear-gradient(180deg, #f4d03f 0%, #f39c12 100%);
+      background: linear-gradient(180deg, #ffd54f 0%, #ffb300 100%);
+      border-color: #f57c00;
+      border-bottom-color: #e65100;
       transform: translateY(-4px);
-      box-shadow: 4px 8px 0 #3d2817;
+      box-shadow: 0 8px 0 #bf360c;
     }
 
     .start-btn {
-      padding: 16px 48px;
-      background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
+      padding: 14px 48px;
+      background: linear-gradient(180deg, #66bb6a 0%, #43a047 100%);
       border: 4px solid #2e7d32;
       border-bottom-width: 8px;
       border-radius: 8px;
@@ -871,9 +633,9 @@
       font-family: 'Press Start 2P', cursive;
       font-size: 12px;
       cursor: pointer;
-      transition: all 0.1s;
-      box-shadow: 4px 4px 0 #1b5e20;
-      margin-bottom: 16px;
+      transition: all 0.15s;
+      box-shadow: 0 4px 0 #1b5e20;
+      margin-bottom: 12px;
     }
 
     .start-btn:active {
@@ -883,25 +645,23 @@
     }
 
     .continue-btn {
-      background: linear-gradient(180deg, #8d6e63 0%, #6d4c41 100%);
-      border-color: #5d4037;
-      border-bottom-color: #3d2817;
-      box-shadow: 4px 4px 0 #3d2817;
+      background: linear-gradient(180deg, #a67c52 0%, #8b6342 100%);
+      border-color: #5c3d2e;
+      border-bottom-color: #3e2723;
+      box-shadow: 0 4px 0 #3e2723;
     }
 
-    /* Responsive */
     @media (max-width: 600px) {
+      .quest-panel { display: none; }
       .mini-map { display: none; }
       .controls-panel { display: none; }
-      .quest-tracker { min-width: 140px; }
-      .quest-item { font-size: 9px; }
     }
   </style>
 </head>
 <body>
   <!-- Start Screen -->
   <div class="start-screen" id="start-screen">
-    <div class="start-title">🌻 像素职场<br>晋升模拟器 🌻</div>
+    <div class="start-title">像素职场<br>晋升模拟器</div>
     <div class="start-subtitle">- PYRAMID OFFICE ADVENTURE -</div>
 
     <div class="start-avatar-section">
@@ -919,81 +679,47 @@
     <button class="start-btn continue-btn" id="continue-btn" style="display:none;">继续游戏</button>
   </div>
 
-  <!-- Game Container -->
-  <div class="game-container" id="game-container" style="display:none;">
-    <!-- Header -->
-    <header class="game-header">
-      <div class="game-title">🌻 像素职场</div>
-      <div class="header-stats">
-        <div class="header-stat">
-          <span class="header-stat-icon">⭐</span>
-          <span class="header-stat-value" id="level-display">Lv.1</span>
-        </div>
-        <div class="header-stat">
-          <span class="header-stat-icon">💼</span>
-          <span class="header-stat-value" id="title-display">实习生</span>
-        </div>
-        <div class="header-stat">
-          <span class="header-stat-icon">🔥</span>
-          <span class="header-stat-value" id="streak-display">0</span>
-        </div>
-      </div>
-    </header>
+  <!-- Game Wrapper -->
+  <div id="game-wrapper" style="display:none;">
+    <canvas id="game-canvas"></canvas>
 
-    <!-- Game World -->
-    <div class="game-world" id="game-world">
-      <div class="ground" id="ground">
-        <!-- Buildings and decorations will be added by JS -->
-      </div>
-
-      <!-- Player -->
-      <div class="character player" id="player">
-        <div class="character-shadow"></div>
-        <div class="player-sprite"></div>
-      </div>
-
-      <!-- NPCs -->
-      <div class="character npc-boss" id="npc-boss" onclick="interactNPC('boss')">
-        <div class="character-shadow"></div>
-        <div class="player-sprite" style="filter: hue-rotate(0deg);"></div>
-        <div class="indicator">👔 严厉上司</div>
-        <div class="interact-prompt">[E] 交互</div>
-      </div>
-      <div class="character npc-colleague" id="npc-colleague" onclick="interactNPC('colleague')">
-        <div class="character-shadow"></div>
-        <div class="player-sprite" style="filter: hue-rotate(200deg);"></div>
-        <div class="indicator">💼 友善同事</div>
-        <div class="interact-prompt">[E] 交互</div>
-      </div>
-      <div class="character npc-hr" id="npc-hr" onclick="interactNPC('hr')">
-        <div class="character-shadow"></div>
-        <div class="player-sprite" style="filter: hue-rotate(280deg);"></div>
-        <div class="indicator">👩‍💼 HR姐姐</div>
-        <div class="interact-prompt">[E] 交互</div>
-      </div>
-      <div class="character npc-client" id="npc-client" onclick="interactNPC('client')">
-        <div class="character-shadow"></div>
-        <div class="player-sprite" style="filter: hue-rotate(40deg);"></div>
-        <div class="indicator">🤵 甲方客户</div>
-        <div class="interact-prompt">[E] 交互</div>
-      </div>
-      <div class="character npc-peer" id="npc-peer" onclick="interactNPC('peer')">
-        <div class="character-shadow"></div>
-        <div class="player-sprite" style="filter: hue-rotate(120deg);"></div>
-        <div class="indicator">👨‍💻 新人同事</div>
-        <div class="interact-prompt">[E] 交互</div>
+    <!-- UI Overlay -->
+    <div class="ui-overlay">
+      <div class="top-bar">
+        <div class="wooden-panel">
+          <div class="game-title">像素职场</div>
+        </div>
+        <div class="wooden-panel player-stats">
+          <div class="stat-box">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value" id="level-display">Lv.1</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-icon">💼</span>
+            <span class="stat-value" id="title-display">实习生</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-value" id="streak-display">0</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Quest Tracker -->
-    <div class="quest-tracker" id="quest-tracker">
-      <div class="quest-title">📜 任务列表</div>
+    <!-- Quest Panel -->
+    <div class="wooden-panel quest-panel" id="quest-panel">
+      <div class="quest-title">📜 任务</div>
       <div id="quest-list"></div>
     </div>
 
+    <!-- Mini Map -->
+    <div class="wooden-panel mini-map">
+      <canvas id="mini-map-canvas" width="140" height="100"></canvas>
+    </div>
+
     <!-- Controls -->
-    <div class="controls-panel">
-      <div class="controls-title">操作</div>
+    <div class="wooden-panel controls-panel">
+      <div class="controls-title">移动</div>
       <div class="key-grid">
         <div></div>
         <div class="key" id="key-w">W</div>
@@ -1002,16 +728,16 @@
         <div class="key" id="key-s">S</div>
         <div class="key" id="key-d">D</div>
       </div>
-      <div style="text-align:center; margin-top:8px;">
-        <div class="key e-key" id="key-e" style="width: 100%;">[E] 交互</div>
+      <div style="margin-top:8px;">
+        <div class="key e-key" id="key-e">E 交互</div>
       </div>
     </div>
 
-    <!-- Mini Map -->
-    <div class="mini-map">
-      <div class="mini-map-title">小地图</div>
-      <div class="mini-map-content" id="mini-map-content">
-        <div class="mini-player" id="mini-player"></div>
+    <!-- Interact Indicator -->
+    <div class="interact-indicator" id="interact-indicator">
+      <div class="interact-box">
+        <div class="interact-name" id="interact-name">👔 严厉上司</div>
+        <div class="interact-hint">按 <kbd>E</kbd> 或点击对话</div>
       </div>
     </div>
   </div>
@@ -1026,19 +752,15 @@
           <div class="dialogue-location" id="dialogue-location">经理办公室</div>
         </div>
       </div>
-
       <div class="dialogue-scene" id="dialogue-scene">📋 任务：初次见面</div>
-
       <div class="dialogue-content">
         <div class="dialogue-npc-text" id="dialogue-text">新人，来我办公室一趟！</div>
         <div class="dialogue-question" id="dialogue-question">作为职场新人，第一次和上司单独交流，你应该如何开场？</div>
-      </div>
-
-      <textarea class="dialogue-input" id="dialogue-input" placeholder="输入你的回答..."></textarea>
-
-      <div class="dialogue-buttons">
-        <button class="dialogue-btn primary" onclick="submitDialogue()">提交回答</button>
-        <button class="dialogue-btn hint" onclick="showHint()">💡 提示</button>
+        <textarea class="dialogue-input" id="dialogue-input" placeholder="输入你的回答..."></textarea>
+        <div class="dialogue-buttons">
+          <button class="dialogue-btn primary" onclick="submitDialogue()">提交回答</button>
+          <button class="dialogue-btn hint" onclick="showHint()">💡 提示</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1048,7 +770,6 @@
     <div class="result-box">
       <div class="result-score" id="result-score">85</div>
       <div class="result-grade" id="result-grade">A级评价</div>
-
       <div class="result-stats">
         <div class="result-stat">
           <div class="result-stat-label">经验值</div>
@@ -1067,12 +788,10 @@
           <div class="result-stat-value" id="result-achievement">初次冒险</div>
         </div>
       </div>
-
       <div class="result-feedback">
         <div class="result-feedback-avatar" id="result-avatar">👔</div>
         <div class="result-feedback-text" id="result-feedback">不错，继续保持。</div>
       </div>
-
       <div class="result-buttons">
         <button class="result-btn" onclick="closeResult()">继续探索</button>
         <button class="result-btn primary" onclick="goToNext()">下一任务</button>
@@ -1095,60 +814,508 @@
     const LEVEL_EXP = [0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200, 4000];
 
     const NPCS = {
-      boss: { name: '严厉上司', avatar: '👔', color: '#e74c3c' },
-      colleague: { name: '友善同事', avatar: '💼', color: '#3498db' },
-      hr: { name: 'HR姐姐', avatar: '👩‍💼', color: '#9b59b6' },
-      client: { name: '甲方客户', avatar: '🤵', color: '#f39c12' },
-      peer: { name: '新人同事', avatar: '👨‍💻', color: '#27ae60' }
+      boss: { name: '严厉上司', avatar: '👔', color: '#c62828' },
+      colleague: { name: '友善同事', avatar: '💼', color: '#1565c0' },
+      hr: { name: 'HR姐姐', avatar: '👩‍💼', color: '#7b1fa2' },
+      client: { name: '甲方客户', avatar: '🤵', color: '#e65100' },
+      peer: { name: '新人同事', avatar: '👨‍💻', color: '#2e7d32' }
     };
 
-    // NPC positions (percentage)
-    const NPC_START_POS = {
-      boss: { x: 75, y: 20 },
-      colleague: { x: 25, y: 45 },
-      hr: { x: 70, y: 75 },
-      client: { x: 20, y: 75 },
-      peer: { x: 55, y: 50 }
-    };
+    const NPC_POS = { boss: {x:680,y:150}, colleague: {x:200,y:320}, hr: {x:620,y:520}, client: {x:150,y:500}, peer: {x:420,y:380} };
 
-    // Building locations
-    const BUILDINGS = [
-      { type: 'office', x: 70, y: 15, w: 120, h: 100, label: '经理办公室', doorX: 60 },
-      { type: 'office', x: 15, y: 70, w: 100, h: 80, label: '会议室', doorX: 50 },
-      { type: 'office', x: 65, y: 70, w: 100, h: 80, label: 'HR区域', doorX: 50 },
-      { type: 'farmhouse', x: 5, y: 40, w: 80, h: 70, label: '茶水间', doorX: 40 }
-    ];
-
-    // Missions
     const MISSIONS = [
-      { id: 1, npc: 'colleague', title: '初次见面', dialogue: '嗨，新人！我是老王，以后有什么不懂的可以问我。', question: '作为新人，你应该如何回应老王的热情招呼？', hint: '简单友好地自我介绍，表达感谢', goodKeywords: ['谢谢', '王哥', '请多指教', '很高兴认识'], perfectAnswer: '王哥好！我是新来的，以后请多指教！' },
-      { id: 2, npc: 'boss', title: '电梯相遇', dialogue: '你就是新来的？', question: '在电梯里偶遇部门经理，他问你是不是新来的，你该怎么回答？', hint: '简洁自信地介绍自己', goodKeywords: ['是的', '经理好', '报到', '请多关照'], perfectAnswer: '是的经理好！我是新入职的小张，请多关照！' },
-      { id: 3, npc: 'hr', title: '入职谈话', dialogue: '小张，欢迎加入我们！有什么问题想问的吗？', question: 'HR问你有什么问题，你应该问什么比较合适？', hint: '询问工作流程、团队情况或发展方向', goodKeywords: ['团队', '流程', '考核', '培训', '发展'], perfectAnswer: '想了解一下团队的分工协作方式，以及对我的考核标准？' },
-      { id: 4, npc: 'peer', title: '请教问题', dialogue: '这个表格怎么做啊？数据透视表我不太熟...', question: '你不太会用数据透视表，需要向同事请教，你应该怎么说？', hint: '礼貌请教，说明具体问题', goodKeywords: ['请问', '方便', '请教', '帮忙', '学习'], perfectAnswer: '王哥，方便的话能教我一下数据透视表吗？' },
-      { id: 5, npc: 'boss', title: '日报汇报', dialogue: '今天的日报呢？', question: '领导问你日报交了没，你应该如何回答并说明今日工作？', hint: '主动汇报，用结构化方式说明', goodKeywords: ['已完成', '今天做了', '总结', '进展', '计划'], perfectAnswer: '经理，日报已提交。今天完成了用户调研报告初稿...' },
-      { id: 6, npc: 'client', title: '需求沟通', dialogue: '这个功能太复杂了，我要简单一点的！', question: '客户觉得功能太复杂，你怎么解释并引导？', hint: '理解需求，说明原因，提供简化方案', goodKeywords: ['理解', '核心需求', '方案', '简化'], perfectAnswer: '王总，我理解您希望操作简便。我们的建议是...' },
-      { id: 7, npc: 'boss', title: '项目汇报', dialogue: '项目进度怎么样了？', question: '项目遇到了一些问题，进度可能延期，你该如何汇报？', hint: '先说结论，再分析原因，提出方案', goodKeywords: ['目前进度', '预计延期', '原因', '方案', '需要支持'], perfectAnswer: '经理，项目预计延期3天。原因是...我的方案是...' },
-      { id: 8, npc: 'hr', title: '绩效面谈', dialogue: '你的季度绩效评了B+，说说你的想法？', question: '你对绩效结果有疑问，想和HR沟通，应该如何表达？', hint: '先感谢，再询问，表达期望', goodKeywords: ['感谢', '想了解', '期望', '提升', '建议'], perfectAnswer: '感谢公司的评估。我想了解一下具体是哪方面还有提升空间？' },
-      { id: 9, npc: 'peer', title: '跨部门协作', dialogue: '你们能不能快点？客户催得急！', question: '其他部门催促你加快进度，你该如何沟通协调？', hint: '理解对方压力，说明现状，共同解决', goodKeywords: ['理解', '抱歉', '现状', '一起', '协调'], perfectAnswer: '我理解你们也很着急。目前的情况是...我们一起想想办法。' },
-      { id: 10, npc: 'boss', title: '述职报告', dialogue: '来，做个年终述职。', question: '年终述职，你需要汇报全年工作，应该如何组织内容？', hint: '结论先行，分点陈述，数据支撑', goodKeywords: ['今年', '主要成果', '关键数据', '贡献', '明年计划'], perfectAnswer: '今年我的核心成果是...关键数据是...明年计划是...' },
-      { id: 11, npc: 'client', title: '投诉处理', dialogue: '你们怎么回事！等了3天了！', question: '客户非常生气地投诉，你应该如何回应？', hint: '先道歉，说明情况，给出方案', goodKeywords: ['非常抱歉', '耽误', '解决方案', '承诺', '补偿'], perfectAnswer: '王总，非常抱歉给您带来不便！解决方案是...预计明天下午6点前完成。' },
-      { id: 12, npc: 'boss', title: '晋升申请', dialogue: '你想申请晋升？说说你的理由。', question: '申请晋升时，你需要向领导说明理由，应该如何表达？', hint: '用数据说话，说明能力和贡献', goodKeywords: ['我的成绩', '核心贡献', '能力提升', '未来价值'], perfectAnswer: '经理，我认为自己已达到晋升标准：1. 业绩提升30%...2. 主导了XX项目...' },
-      { id: 13, npc: 'boss', title: '危机处理', dialogue: '出事了！客户数据泄露了！', question: '突发危机事件，你需要立即向上司汇报，应该怎么做？', hint: '先说结论，再说现状和措施', goodKeywords: ['紧急', '情况是', '已采取措施', '需要支持'], perfectAnswer: '经理紧急汇报：客户数据泄露已发生。我们已立即切断源头...' },
-      { id: 14, npc: 'boss', title: '高管汇报', dialogue: '给VP汇报一下项目情况。', question: '需要在高管面前汇报项目，你应该如何准备和表达？', hint: '结论先行，重点突出，数据说话', goodKeywords: ['核心结论', '关键成果', '数据支撑', '风险预案'], perfectAnswer: 'VP好，项目整体进展良好：核心成果是...主要风险是...预案是...' }
+      { id:1, npc:'colleague', title:'初次见面', dialogue:'嗨，新人！我是老王，以后有什么不懂的可以问我。', question:'作为新人，你应该如何回应老王的热情招呼？', hint:'简单友好地自我介绍，表达感谢', goodKeywords:['谢谢','王哥','请多指教','很高兴认识'], perfectAnswer:'王哥好！我是新来的，以后请多指教！' },
+      { id:2, npc:'boss', title:'电梯相遇', dialogue:'你就是新来的？', question:'在电梯里偶遇部门经理，他问你是不是新来的，你该怎么回答？', hint:'简洁自信地介绍自己', goodKeywords:['是的','经理好','报到','请多关照'], perfectAnswer:'是的经理好！我是新入职的小张，请多关照！' },
+      { id:3, npc:'hr', title:'入职谈话', dialogue:'小张，欢迎加入我们！有什么问题想问的吗？', question:'HR问你有什么问题，你应该问什么比较合适？', hint:'询问工作流程、团队情况或发展方向', goodKeywords:['团队','流程','考核','培训','发展'], perfectAnswer:'想了解一下团队的分工协作方式，以及对我的考核标准？' },
+      { id:4, npc:'peer', title:'请教问题', dialogue:'这个表格怎么做啊？数据透视表我不太熟...', question:'你不太会用数据透视表，需要向同事请教，你应该怎么说？', hint:'礼貌请教，说明具体问题', goodKeywords:['请问','方便','请教','帮忙','学习'], perfectAnswer:'王哥，方便的话能教我一下数据透视表吗？' },
+      { id:5, npc:'boss', title:'日报汇报', dialogue:'今天的日报呢？', question:'领导问你日报交了没，你应该如何回答并说明今日工作？', hint:'主动汇报，用结构化方式说明', goodKeywords:['已完成','今天做了','总结','进展','计划'], perfectAnswer:'经理，日报已提交。今天完成了用户调研报告初稿...' },
+      { id:6, npc:'client', title:'需求沟通', dialogue:'这个功能太复杂了，我要简单一点的！', question:'客户觉得功能太复杂，你怎么解释并引导？', hint:'理解需求，说明原因，提供简化方案', goodKeywords:['理解','核心需求','方案','简化'], perfectAnswer:'王总，我理解您希望操作简便。我们的建议是...' },
+      { id:7, npc:'boss', title:'项目汇报', dialogue:'项目进度怎么样了？', question:'项目遇到了一些问题，进度可能延期，你该如何汇报？', hint:'先说结论，再分析原因，提出方案', goodKeywords:['目前进度','预计延期','原因','方案','需要支持'], perfectAnswer:'经理，项目预计延期3天。原因是...我的方案是...' },
+      { id:8, npc:'hr', title:'绩效面谈', dialogue:'你的季度绩效评了B+，说说你的想法？', question:'你对绩效结果有疑问，想和HR沟通，应该如何表达？', hint:'先感谢，再询问，表达期望', goodKeywords:['感谢','想了解','期望','提升','建议'], perfectAnswer:'感谢公司的评估。我想了解一下具体是哪方面还有提升空间？' },
+      { id:9, npc:'peer', title:'跨部门协作', dialogue:'你们能不能快点？客户催得急！', question:'其他部门催促你加快进度，你该如何沟通协调？', hint:'理解对方压力，说明现状，共同解决', goodKeywords:['理解','抱歉','现状','一起','协调'], perfectAnswer:'我理解你们也很着急。目前的情况是...我们一起想想办法。' },
+      { id:10, npc:'boss', title:'述职报告', dialogue:'来，做个年终述职。', question:'年终述职，你需要汇报全年工作，应该如何组织内容？', hint:'结论先行，分点陈述，数据支撑', goodKeywords:['今年','主要成果','关键数据','贡献','明年计划'], perfectAnswer:'今年我的核心成果是...关键数据是...明年计划是...' },
+      { id:11, npc:'client', title:'投诉处理', dialogue:'你们怎么回事！等了3天了！', question:'客户非常生气地投诉，你应该如何回应？', hint:'先道歉，说明情况，给出方案', goodKeywords:['非常抱歉','耽误','解决方案','承诺','补偿'], perfectAnswer:'王总，非常抱歉给您带来不便！解决方案是...' },
+      { id:12, npc:'boss', title:'晋升申请', dialogue:'你想申请晋升？说说你的理由。', question:'申请晋升时，你需要向领导说明理由，应该如何表达？', hint:'用数据说话，说明能力和贡献', goodKeywords:['我的成绩','核心贡献','能力提升','未来价值'], perfectAnswer:'经理，我认为自己已达到晋升标准：1. 业绩提升30%...' },
+      { id:13, npc:'boss', title:'危机处理', dialogue:'出事了！客户数据泄露了！', question:'突发危机事件，你需要立即向上司汇报，应该怎么做？', hint:'先说结论，再说现状和措施', goodKeywords:['紧急','情况是','已采取措施','需要支持'], perfectAnswer:'经理紧急汇报：客户数据泄露已发生。我们已立即切断源头...' },
+      { id:14, npc:'boss', title:'高管汇报', dialogue:'给VP汇报一下项目情况。', question:'需要在高管面前汇报项目，你应该如何准备和表达？', hint:'结论先行，重点突出，数据说话', goodKeywords:['核心结论','关键成果','数据支撑','风险预案'], perfectAnswer:'VP好，项目整体进展良好：核心成果是...主要风险是...' }
     ];
 
     // ==================== GAME STATE ====================
 
     let gameState = {
-      player: { x: 50, y: 85, avatar: '👨‍💻', level: 1, exp: 0, track: 'management', titleIndex: 0 },
+      player: { x: 400, y: 580, avatar: '👨‍💻', level: 1, exp: 0, track: 'management', titleIndex: 0, facing: 'down', frame: 0 },
       npcFavorability: { boss: 50, colleague: 60, hr: 70, client: 40, peer: 55 },
-      currentQuest: 0,
-      completedQuests: [],
-      streak: 0,
-      soundEnabled: true,
-      dialogueActive: false,
-      startTime: null
+      currentQuest: 0, completedQuests: [], streak: 0, soundEnabled: true, dialogueActive: false, startTime: null
     };
+
+    // ==================== CANVAS SETUP ====================
+
+    let canvas, ctx, miniCanvas, miniCtx;
+    let worldWidth = 800, worldHeight = 650;
+    let camera = { x: 0, y: 0 };
+    let animationFrame = 0;
+
+    function initCanvas() {
+      canvas = document.getElementById('game-canvas');
+      ctx = canvas.getContext('2d');
+      miniCanvas = document.getElementById('mini-map-canvas');
+      miniCtx = miniCanvas.getContext('2d');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    // ==================== PIXEL ART DRAWING ====================
+
+    // 16-color palette inspired by Stardew
+    const PALETTE = {
+      transparent: 'rgba(0,0,0,0)',
+      black: '#1a1a2e',
+      darkBrown: '#5c3d2e',
+      brown: '#8b6342',
+      lightBrown: '#c4a574',
+      tan: '#e8d5b7',
+      white: '#ffffff',
+      skin: '#ffdbac',
+      skinDark: '#e8b88a',
+      hairBrown: '#6d4c41',
+      hairBlack: '#2d2d44',
+      hairBlonde: '#d4a853',
+      shirtBlue: '#1976d2',
+      shirtBlueDark: '#1565c0',
+      shirtGreen: '#43a047',
+      shirtRed: '#c62828',
+      shirtPurple: '#7b1fa2',
+      shirtOrange: '#e65100',
+      pantsBlue: '#283593',
+      pantsBrown: '#6d4c41',
+      pantsBlack: '#37474f',
+      shoeBrown: '#5d4037',
+      grass: '#7cb342',
+      grassDark: '#558b2f',
+      grassLight: '#9ccc65',
+      dirt: '#8d6e63',
+      dirtDark: '#6d4c41',
+      wood: '#a1887f',
+      woodDark: '#6d4c41',
+      roofRed: '#c62828',
+      roofGray: '#546e7a',
+      windowBlue: '#4fc3f7',
+      leaf: '#4caf50',
+      leafDark: '#2e7d32'
+    };
+
+    function drawPixel(ctx, x, y, size, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(Math.floor(x), Math.floor(y), size, size);
+    }
+
+    function drawRect(ctx, x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(Math.floor(x), Math.floor(y), w, h);
+    }
+
+    // Character sprite drawing - proper human proportions
+    function drawCharacter(ctx, x, y, config) {
+      const { hairColor, shirtColor, pantsColor, facing, frame, isNPC, npcColor, isWalking } = config;
+      const s = 3; // pixel size
+      const bounce = isWalking ? Math.sin(frame * 0.5) * 2 : 0;
+
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.beginPath();
+      ctx.ellipse(x, y + 38, 14, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const baseY = y - bounce;
+
+      // Legs
+      const legOffset = isWalking ? Math.sin(frame * 0.5) * 4 : 0;
+
+      // Left leg
+      drawRect(ctx, x - 7, baseY + 12, 5, 16, pantsColor);
+      drawRect(ctx, x - 7, baseY + 24, 5, 4, PALETTE.shoeBrown);
+
+      // Right leg
+      drawRect(ctx, x + 2, baseY + 12, 5, 16, pantsColor);
+      drawRect(ctx, x + 2, baseY + 24, 5, 4, PALETTE.shoeBrown);
+
+      // Body/Torso
+      drawRect(ctx, x - 9, baseY - 4, 18, 18, shirtColor);
+
+      // Arms
+      const armSwing = isWalking ? Math.sin(frame * 0.5) * 8 : 0;
+
+      // Left arm
+      drawRect(ctx, x - 14, baseY - 2 + armSwing * 0.3, 5, 14, shirtColor);
+      drawRect(ctx, x - 14, baseY + 10 + armSwing * 0.3, 5, 5, PALETTE.skin);
+
+      // Right arm
+      drawRect(ctx, x + 9, baseY - 2 - armSwing * 0.3, 5, 14, shirtColor);
+      drawRect(ctx, x + 9, baseY + 10 - armSwing * 0.3, 5, 5, PALETTE.skin);
+
+      // Neck
+      drawRect(ctx, x - 3, baseY - 8, 6, 6, PALETTE.skin);
+
+      // Head
+      drawRect(ctx, x - 10, baseY - 28, 20, 20, PALETTE.skin);
+
+      // Hair
+      drawRect(ctx, x - 10, baseY - 30, 20, 10, hairColor);
+      if (facing === 'left' || facing === 'up') {
+        drawRect(ctx, x - 12, baseY - 28, 4, 16, hairColor);
+      }
+      if (facing === 'right' || facing === 'up') {
+        drawRect(ctx, x + 8, baseY - 28, 4, 16, hairColor);
+      }
+
+      // Face
+      if (facing !== 'up') {
+        // Eyes
+        const eyeY = baseY - 20;
+        if (facing === 'down' || facing === 'left' || facing === 'right') {
+          drawRect(ctx, x - 6, eyeY, 4, 4, PALETTE.black);
+          drawRect(ctx, x + 2, eyeY, 4, 4, PALETTE.black);
+          // Eye shine
+          drawPixel(ctx, x - 5, eyeY, s, PALETTE.white);
+          drawPixel(ctx, x + 3, eyeY, s, PALETTE.white);
+        }
+
+        // Mouth
+        drawRect(ctx, x - 3, baseY - 12, 6, 2, PALETTE.black);
+      }
+
+      // NPC indicator
+      if (isNPC && npcColor) {
+        ctx.fillStyle = npcColor;
+        ctx.beginPath();
+        ctx.arc(x, baseY - 45, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = PALETTE.white;
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(isNPC === 'boss' ? '👔' : isNPC === 'colleague' ? '💼' : isNPC === 'hr' ? '👩‍💼' : isNPC === 'client' ? '🤵' : '👨‍💻', x, baseY - 41);
+      }
+    }
+
+    // ==================== WORLD RENDERING ====================
+
+    function drawWorld() {
+      // Sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      skyGrad.addColorStop(0, '#87ceeb');
+      skyGrad.addColorStop(0.6, '#98d8c8');
+      skyGrad.addColorStop(1, '#7cb342');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update camera to follow player
+      camera.x = Math.max(0, Math.min(gameState.player.x - canvas.width / 2, worldWidth - canvas.width));
+      camera.y = Math.max(0, Math.min(gameState.player.y - canvas.height / 2, worldHeight - canvas.height));
+
+      const offsetX = -camera.x;
+      const offsetY = -camera.y;
+
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+
+      // Ground
+      drawGrass(0, 0, worldWidth, worldHeight);
+
+      // Dirt paths
+      drawDirtPath(0, 300, worldWidth, 20);
+      drawDirtPath(380, 0, 30, worldHeight);
+      drawDirtPath(100, 450, worldWidth - 100, 25);
+      drawDirtPath(580, 80, 25, 450);
+      drawDirtPath(0, 200, 150, 20);
+
+      // Buildings
+      drawOfficeBuilding(580, 50, 180, 150, '经理办公室', '#546e7a');
+      drawOfficeBuilding(60, 450, 160, 130, '会议室', '#78909c');
+      drawOfficeBuilding(520, 450, 150, 130, 'HR区域', '#78909c');
+      drawFarmHouse(30, 130, 140, 120, '茶水间');
+
+      // Trees
+      drawTree(720, 320);
+      drawTree(750, 420);
+      drawTree(50, 320);
+      drawTree(100, 80);
+      drawTree(480, 80);
+      drawTree(280, 550);
+
+      // Fences
+      drawFence(200, 200);
+      drawFence(230, 200);
+      drawFence(260, 200);
+
+      // NPCs
+      Object.entries(NPC_POS).forEach(([npcId, pos]) => {
+        const mission = MISSIONS.find(m => m.npc === npcId);
+        if (gameState.completedQuests.includes(mission?.id)) return;
+
+        const config = getNPCConfig(npcId);
+        config.isNPC = npcId;
+        config.isWalking = false;
+        drawCharacter(ctx, pos.x, pos.y, config);
+      });
+
+      // Player
+      const isWalking = keys['w'] || keys['a'] || keys['s'] || keys['d'] ||
+                        keys['arrowup'] || keys['arrowleft'] || keys['arrowdown'] || keys['arrowright'];
+      const playerConfig = {
+        hairColor: PALETTE.hairBrown,
+        shirtColor: PALETTE.shirtBlue,
+        pantsColor: PALETTE.pantsBlue,
+        facing: gameState.player.facing,
+        frame: gameState.player.frame,
+        isWalking
+      };
+      drawCharacter(ctx, gameState.player.x, gameState.player.y, playerConfig);
+
+      ctx.restore();
+
+      // Update mini map
+      drawMiniMap();
+
+      animationFrame++;
+      if (isWalking) gameState.player.frame++;
+
+      requestAnimationFrame(drawWorld);
+    }
+
+    function drawGrass(x, y, w, h) {
+      // Base grass
+      ctx.fillStyle = PALETTE.grass;
+      ctx.fillRect(x, y, w, h);
+
+      // Grass texture
+      for (let i = 0; i < w; i += 16) {
+        for (let j = 0; j < h; j += 16) {
+          if ((i + j) % 32 === 0) {
+            ctx.fillStyle = PALETTE.grassDark;
+            ctx.fillRect(x + i, y + j, 8, 8);
+          }
+          if ((i * j) % 48 === 0) {
+            ctx.fillStyle = PALETTE.grassLight;
+            ctx.fillRect(x + i + 4, y + j, 4, 4);
+          }
+        }
+      }
+    }
+
+    function drawDirtPath(x, y, w, h) {
+      ctx.fillStyle = PALETTE.dirt;
+      ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = PALETTE.dirtDark;
+      for (let i = 0; i < w; i += 24) {
+        for (let j = 0; j < h; j += 24) {
+          if ((i + j) % 48 === 0) {
+            ctx.fillRect(x + i, y + j, 12, 12);
+          }
+        }
+      }
+    }
+
+    function drawOfficeBuilding(x, y, w, h, label, roofColor) {
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(x + 8, y + 8, w, h);
+
+      // Building body
+      ctx.fillStyle = '#90a4ae';
+      ctx.fillRect(x, y, w, h);
+
+      // Roof
+      ctx.fillStyle = roofColor;
+      ctx.beginPath();
+      ctx.moveTo(x - 10, y);
+      ctx.lineTo(x + w / 2, y - 40);
+      ctx.lineTo(x + w + 10, y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Door
+      ctx.fillStyle = '#607d8b';
+      ctx.fillRect(x + w/2 - 20, y + h - 50, 40, 50);
+      ctx.fillStyle = '#ffb74d';
+      ctx.fillRect(x + w/2 - 15, y + h - 45, 30, 35);
+
+      // Windows
+      ctx.fillStyle = '#4fc3f7';
+      ctx.fillRect(x + 15, y + 25, 35, 35);
+      ctx.fillRect(x + w - 50, y + 25, 35, 35);
+
+      // Window frames
+      ctx.fillStyle = '#eceff1';
+      ctx.fillRect(x + 15, y + 40, 35, 3);
+      ctx.fillRect(x + 15 + 16, y + 25, 3, 35);
+      ctx.fillRect(x + w - 50, y + 40, 35, 3);
+      ctx.fillRect(x + w - 50 + 16, y + 25, 3, 35);
+
+      // Label
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(x + w/2 - 50, y + h + 10, 100, 24);
+      ctx.fillStyle = '#fff';
+      ctx.font = '12px "Noto Sans SC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x + w/2, y + h + 27);
+    }
+
+    function drawFarmHouse(x, y, w, h, label) {
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(x + 8, y + 8, w, h);
+
+      // Building body - wooden color
+      ctx.fillStyle = PALETTE.lightBrown;
+      ctx.fillRect(x, y, w, h);
+
+      // Wood planks
+      ctx.fillStyle = PALETTE.brown;
+      for (let i = 0; i < h; i += 12) {
+        ctx.fillRect(x, y + i, w, 2);
+      }
+
+      // Roof - red/brown
+      ctx.fillStyle = PALETTE.roofRed;
+      ctx.beginPath();
+      ctx.moveTo(x - 15, y);
+      ctx.lineTo(x + w/2, y - 45);
+      ctx.lineTo(x + w + 15, y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Door
+      ctx.fillStyle = PALETTE.darkBrown;
+      ctx.fillRect(x + w/2 - 18, y + h - 55, 36, 55);
+
+      // Door knob
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath();
+      ctx.arc(x + w/2 + 10, y + h - 28, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Windows
+      ctx.fillStyle = '#4fc3f7';
+      ctx.fillRect(x + 15, y + 20, 30, 30);
+      ctx.fillRect(x + w - 45, y + 20, 30, 30);
+
+      // Window frames
+      ctx.fillStyle = PALETTE.brown;
+      ctx.fillRect(x + 15, y + 33, 30, 2);
+      ctx.fillRect(x + 28, y + 20, 2, 30);
+      ctx.fillRect(x + w - 45, y + 33, 30, 2);
+      ctx.fillRect(x + w - 45 + 13, y + 20, 2, 30);
+
+      // Label
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(x + w/2 - 40, y + h + 10, 80, 24);
+      ctx.fillStyle = '#fff';
+      ctx.font = '12px "Noto Sans SC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x + w/2, y + h + 27);
+    }
+
+    function drawTree(x, y) {
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.beginPath();
+      ctx.ellipse(x + 4, y + 50, 25, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Trunk
+      ctx.fillStyle = '#6d4c41';
+      ctx.fillRect(x - 8, y - 10, 16, 60);
+      ctx.fillStyle = '#8d6e63';
+      ctx.fillRect(x - 4, y - 10, 8, 60);
+
+      // Leaves - multiple circles for fluffy look
+      ctx.fillStyle = PALETTE.leafDark;
+      ctx.beginPath();
+      ctx.arc(x, y - 35, 35, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = PALETTE.leaf;
+      ctx.beginPath();
+      ctx.arc(x - 15, y - 25, 25, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 15, y - 25, 25, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x, y - 45, 25, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x - 10, y - 50, 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + 10, y - 50, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawFence(x, y) {
+      ctx.fillStyle = PALETTE.wood;
+      // Posts
+      ctx.fillRect(x, y, 8, 40);
+      ctx.fillRect(x + 24, y, 8, 40);
+      // Horizontal bars
+      ctx.fillRect(x - 4, y + 8, 44, 6);
+      ctx.fillRect(x - 4, y + 24, 44, 6);
+      // Post tops
+      ctx.fillStyle = PALETTE.woodDark;
+      ctx.fillRect(x, y - 4, 8, 6);
+      ctx.fillRect(x + 24, y - 4, 8, 6);
+    }
+
+    function drawMiniMap() {
+      const scaleX = 140 / worldWidth;
+      const scaleY = 100 / worldHeight;
+
+      // Background
+      miniCtx.fillStyle = PALETTE.grass;
+      miniCtx.fillRect(0, 0, 140, 100);
+
+      // Buildings
+      miniCtx.fillStyle = '#78909c';
+      miniCtx.fillRect(580 * scaleX, 50 * scaleY, 180 * scaleX, 150 * scaleY);
+      miniCtx.fillRect(60 * scaleX, 450 * scaleY, 160 * scaleX, 130 * scaleY);
+      miniCtx.fillRect(520 * scaleX, 450 * scaleY, 150 * scaleX, 130 * scaleY);
+      miniCtx.fillRect(30 * scaleX, 130 * scaleY, 140 * scaleX, 120 * scaleY);
+
+      // NPCs
+      Object.entries(NPC_POS).forEach(([npcId, pos]) => {
+        const mission = MISSIONS.find(m => m.npc === npcId);
+        if (gameState.completedQuests.includes(mission?.id)) return;
+        miniCtx.fillStyle = NPCS[npcId].color;
+        miniCtx.beginPath();
+        miniCtx.arc(pos.x * scaleX, pos.y * scaleY, 4, 0, Math.PI * 2);
+        miniCtx.fill();
+      });
+
+      // Player
+      miniCtx.fillStyle = '#1976d2';
+      miniCtx.beginPath();
+      miniCtx.arc(gameState.player.x * scaleX, gameState.player.y * scaleY, 5, 0, Math.PI * 2);
+      miniCtx.fill();
+      miniCtx.strokeStyle = '#fff';
+      miniCtx.lineWidth = 2;
+      miniCtx.stroke();
+    }
+
+    function getNPCConfig(npcId) {
+      const configs = {
+        boss: { hairColor: PALETTE.hairBlack, shirtColor: '#37474f', pantsColor: PALETTE.pantsBlack },
+        colleague: { hairColor: PALETTE.hairBrown, shirtColor: PALETTE.shirtGreen, pantsColor: PALETTE.pantsBrown },
+        hr: { hairColor: PALETTE.hairBlack, shirtColor: '#ec407a', pantsColor: PALETTE.pantsBlue },
+        client: { hairColor: PALETTE.hairBrown, shirtColor: PALETTE.shirtBlue, pantsColor: PALETTE.pantsBlack },
+        peer: { hairColor: PALETTE.hairBlonde, shirtColor: PALETTE.shirtBlueDark, pantsColor: PALETTE.pantsBlue }
+      };
+      return configs[npcId] || configs.boss;
+    }
 
     // ==================== AUDIO ====================
 
@@ -1170,39 +1337,36 @@
 
         switch(type) {
           case 'move':
-            osc.frequency.value = 200 + Math.random() * 100;
-            gain.gain.value = 0.03;
+            osc.frequency.value = 150 + Math.random() * 50;
+            gain.gain.value = 0.04;
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.03);
+            osc.stop(audioCtx.currentTime + 0.04);
             break;
           case 'interact':
             osc.frequency.value = 440;
-            gain.gain.value = 0.1;
+            gain.gain.value = 0.12;
             osc.start();
-            setTimeout(() => { osc.frequency.value = 550; }, 60);
-            setTimeout(() => { osc.frequency.value = 660; }, 120);
-            osc.stop(audioCtx.currentTime + 0.2);
+            setTimeout(() => { osc.frequency.value = 550; }, 70);
+            setTimeout(() => { osc.frequency.value = 660; }, 140);
+            osc.stop(audioCtx.currentTime + 0.25);
             break;
           case 'success':
             osc.frequency.value = 523;
-            gain.gain.value = 0.1;
+            gain.gain.value = 0.12;
             osc.start();
-            setTimeout(() => { osc.frequency.value = 659; }, 80);
-            setTimeout(() => { osc.frequency.value = 784; }, 160);
-            osc.stop(audioCtx.currentTime + 0.3);
+            setTimeout(() => { osc.frequency.value = 659; }, 100);
+            setTimeout(() => { osc.frequency.value = 784; }, 200);
+            osc.stop(audioCtx.currentTime + 0.35);
             break;
           case 'fail':
-            osc.frequency.value = 200;
-            gain.gain.value = 0.1;
+            osc.frequency.value = 180;
+            gain.gain.value = 0.12;
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
+            osc.stop(audioCtx.currentTime + 0.25);
             break;
           case 'levelup':
             [0, 100, 200, 300, 400].forEach((delay, i) => {
-              setTimeout(() => {
-                osc.frequency.value = 440 + i * 110;
-                gain.gain.value = 0.12;
-              }, delay);
+              setTimeout(() => { osc.frequency.value = 440 + i * 110; gain.gain.value = 0.15; }, delay);
             });
             osc.start();
             osc.stop(audioCtx.currentTime + 0.6);
@@ -1211,215 +1375,85 @@
       } catch(e) {}
     }
 
-    // ==================== GAME INIT ====================
+    // ==================== GAME LOGIC ====================
 
     function loadGame() {
-      const saved = localStorage.getItem('pyramid_office_v3');
-      if (saved) {
-        gameState = JSON.parse(saved);
-        return true;
-      }
+      const saved = localStorage.getItem('pyramid_office_v4');
+      if (saved) { gameState = JSON.parse(saved); return true; }
       return false;
     }
 
     function saveGame() {
-      localStorage.setItem('pyramid_office_v3', JSON.stringify(gameState));
+      localStorage.setItem('pyramid_office_v4', JSON.stringify(gameState));
     }
 
     function startNewGame() {
-      const selectedAvatar = document.querySelector('.avatar-choice.selected')?.dataset.avatar || '👨‍💻';
+      const avatar = document.querySelector('.avatar-choice.selected')?.dataset.avatar || '👨‍💻';
       gameState = {
-        player: { x: 50, y: 85, avatar: selectedAvatar, level: 1, exp: 0, track: 'management', titleIndex: 0 },
+        player: { x: 400, y: 580, avatar, level: 1, exp: 0, track: 'management', titleIndex: 0, facing: 'down', frame: 0 },
         npcFavorability: { boss: 50, colleague: 60, hr: 70, client: 40, peer: 55 },
-        currentQuest: 0,
-        completedQuests: [],
-        streak: 0,
-        soundEnabled: true,
-        dialogueActive: false,
-        startTime: Date.now()
+        currentQuest: 0, completedQuests: [], streak: 0, soundEnabled: true, dialogueActive: false, startTime: Date.now()
       };
       saveGame();
       showGame();
     }
 
-    function continueGame() {
-      showGame();
-    }
+    function continueGame() { showGame(); }
 
     function showGame() {
       document.getElementById('start-screen').style.display = 'none';
-      document.getElementById('game-container').style.display = 'flex';
-      initWorld();
-      positionNPCs();
+      document.getElementById('game-wrapper').style.display = 'block';
+      initCanvas();
+      setupControls();
       updateUI();
       updateQuestList();
-      setupControls();
-    }
-
-    // ==================== WORLD SETUP ====================
-
-    function initWorld() {
-      const ground = document.getElementById('ground');
-      ground.innerHTML = '';
-
-      // Add dirt paths
-      const paths = [
-        { x: 45, y: 80, w: 10, h: 20 },
-        { x: 20, y: 50, w: 60, h: 8 },
-        { x: 65, y: 20, w: 8, h: 35 },
-        { x: 15, y: 65, w: 8, h: 20 }
-      ];
-
-      paths.forEach(p => {
-        const path = document.createElement('div');
-        path.className = 'dirt-path';
-        path.style.left = p.x + '%';
-        path.style.top = p.y + '%';
-        path.style.width = p.w + '%';
-        path.style.height = p.h + '%';
-        ground.appendChild(path);
-      });
-
-      // Add trees
-      const trees = [
-        { x: 85, y: 40 }, { x: 90, y: 55 }, { x: 8, y: 20 },
-        { x: 40, y: 10 }, { x: 55, y: 85 }, { x: 88, y: 80 }
-      ];
-
-      trees.forEach(t => {
-        const tree = document.createElement('div');
-        tree.className = 'tree';
-        tree.style.left = t.x + '%';
-        tree.style.top = t.y + '%';
-        tree.innerHTML = '<div class="tree-leaves"></div><div class="tree-trunk"></div>';
-        ground.appendChild(tree);
-      });
-
-      // Add buildings
-      BUILDINGS.forEach(b => {
-        const building = document.createElement('div');
-        building.className = b.type === 'farmhouse' ? 'building' : 'office-building';
-        building.style.left = b.x + '%';
-        building.style.top = b.y + '%';
-        building.style.width = b.w + 'px';
-        building.style.height = b.h + 'px';
-
-        const roof = document.createElement('div');
-        roof.className = 'building-roof';
-        building.appendChild(roof);
-
-        const door = document.createElement('div');
-        door.className = 'building-door';
-        door.style.left = (b.doorX || 50) + 'px';
-        building.appendChild(door);
-
-        const label = document.createElement('div');
-        label.className = 'building-label';
-        label.textContent = b.label;
-        building.appendChild(label);
-
-        ground.appendChild(building);
-      });
-
-      // Add fences
-      const fences = [
-        { x: 35, y: 75 }, { x: 38, y: 75 }, { x: 41, y: 75 },
-        { x: 60, y: 40 }, { x: 63, y: 40 }
-      ];
-
-      fences.forEach(f => {
-        const fence = document.createElement('div');
-        fence.className = 'fence';
-        fence.style.left = f.x + '%';
-        fence.style.top = f.y + '%';
-        ground.appendChild(fence);
-      });
-
-      // Setup mini map
-      updateMiniMap();
-    }
-
-    function updateMiniMap() {
-      const content = document.getElementById('mini-map-content');
-      content.innerHTML = '<div class="mini-player" id="mini-player"></div>';
-
-      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
-        const dot = document.createElement('div');
-        dot.className = 'mini-npc';
-        dot.style.left = pos.x + '%';
-        dot.style.top = pos.y + '%';
-        dot.style.background = NPCS[npcId].color;
-        content.appendChild(dot);
-      });
-    }
-
-    // ==================== PLAYER & NPC ====================
-
-    function positionPlayer() {
-      const player = document.getElementById('player');
-      player.style.left = `calc(${gameState.player.x}% - 16px)`;
-      player.style.top = `calc(${gameState.player.y}% - 24px)`;
-
-      const miniPlayer = document.getElementById('mini-player');
-      if (miniPlayer) {
-        miniPlayer.style.left = gameState.player.x + '%';
-        miniPlayer.style.top = gameState.player.y + '%';
-      }
-    }
-
-    function positionNPCs() {
-      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
-        const npc = document.getElementById('npc-' + npcId);
-        if (npc) {
-          const completed = MISSIONS.find(m => m.npc === npcId && gameState.completedQuests.includes(m.id));
-          npc.style.left = `calc(${pos.x}% - 16px)`;
-          npc.style.top = `calc(${pos.y}% - 24px)`;
-          npc.style.opacity = completed ? '0.4' : '1';
-          npc.style.pointerEvents = completed ? 'none' : 'auto';
-        }
-      });
+      drawWorld();
     }
 
     // ==================== CONTROLS ====================
 
     const keys = {};
-    let lastMoveTime = 0;
+    let lastMove = 0;
 
     function setupControls() {
-      document.addEventListener('keydown', (e) => {
+      document.addEventListener('keydown', e => {
         if (gameState.dialogueActive) {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            submitDialogue();
-          }
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitDialogue(); }
           return;
         }
-
         keys[e.key.toLowerCase()] = true;
+        keys[e.key] = true;
         updateKeyVisual(e.key.toLowerCase(), true);
+
+        if (e.key.toLowerCase() === 'e') { tryInteract(); keys['e'] = false; }
       });
 
-      document.addEventListener('keyup', (e) => {
+      document.addEventListener('keyup', e => {
         keys[e.key.toLowerCase()] = false;
+        keys[e.key] = false;
         updateKeyVisual(e.key.toLowerCase(), false);
       });
 
-      // Movement loop
       setInterval(() => {
         if (gameState.dialogueActive) return;
-
         const now = Date.now();
-        if (now - lastMoveTime < 100) return;
+        if (now - lastMove < 120) return;
 
-        let dx = 0, dy = 0;
-        if (keys['w'] || keys['arrowup']) dy = -1;
-        if (keys['s'] || keys['arrowdown']) dy = 1;
-        if (keys['a'] || keys['arrowleft']) dx = -1;
-        if (keys['d'] || keys['arrowright']) dx = 1;
+        let dx = 0, dy = 0, moved = false;
+        if (keys['w'] || keys['arrowup']) { dy = -1; gameState.player.facing = 'up'; moved = true; }
+        if (keys['s'] || keys['arrowdown']) { dy = 1; gameState.player.facing = 'down'; moved = true; }
+        if (keys['a'] || keys['arrowleft']) { dx = -1; gameState.player.facing = 'left'; moved = true; }
+        if (keys['d'] || keys['arrowright']) { dx = 1; gameState.player.facing = 'right'; moved = true; }
 
-        if (dx !== 0 || dy !== 0) {
-          movePlayer(dx, dy);
-          lastMoveTime = now;
+        if (moved) {
+          if (dx && dy) { dx *= 0.707; dy *= 0.707; }
+          const speed = 4;
+          gameState.player.x = Math.max(30, Math.min(worldWidth - 30, gameState.player.x + dx * speed));
+          gameState.player.y = Math.max(50, Math.min(worldHeight - 20, gameState.player.y + dy * speed));
+          playSound('move');
+          lastMove = now;
+          checkNearNPC();
+          saveGame();
         }
       }, 16);
     }
@@ -1430,57 +1464,30 @@
       if (el) el.classList.toggle('active', active);
     }
 
-    function movePlayer(dx, dy) {
-      const speed = 1.2;
-
-      // Normalize diagonal movement
-      if (dx !== 0 && dy !== 0) {
-        dx *= 0.707;
-        dy *= 0.707;
-      }
-
-      gameState.player.x = Math.max(3, Math.min(97, gameState.player.x + dx * speed));
-      gameState.player.y = Math.max(5, Math.min(95, gameState.player.y + dy * speed));
-
-      const player = document.getElementById('player');
-      player.classList.add('walking');
-      setTimeout(() => player.classList.remove('walking'), 200);
-
-      playSound('move');
-      positionPlayer();
-      checkNearNPC();
-      saveGame();
-    }
-
     let nearbyNPC = null;
 
     function checkNearNPC() {
       nearbyNPC = null;
-      document.querySelectorAll('.character.npc-boss, .character.npc-colleague, .character.npc-hr, .character.npc-client, .character.npc-peer').forEach(npc => {
-        npc.classList.remove('nearby');
-      });
+      document.getElementById('interact-indicator').style.display = 'none';
 
-      Object.entries(NPC_START_POS).forEach(([npcId, pos]) => {
-        if (gameState.completedQuests.includes(MISSIONS.find(m => m.npc === npcId)?.id)) return;
+      Object.entries(NPC_POS).forEach(([npcId, pos]) => {
+        const mission = MISSIONS.find(m => m.npc === npcId);
+        if (gameState.completedQuests.includes(mission?.id)) return;
 
         const dist = Math.hypot(pos.x - gameState.player.x, pos.y - gameState.player.y);
-        if (dist < 12) {
+        if (dist < 70) {
           nearbyNPC = npcId;
-          document.getElementById('npc-' + npcId).classList.add('nearby');
+          const indicator = document.getElementById('interact-indicator');
+          const npc = NPCS[npcId];
+          document.getElementById('interact-name').textContent = `${npc.avatar} ${npc.name}`;
+          document.getElementById('interact-name').style.color = npc.color;
+          indicator.style.display = 'block';
         }
       });
-
-      // Auto-interact prompt
-      if (keys['e']) {
-        tryInteract();
-        keys['e'] = false;
-      }
     }
 
     function tryInteract() {
-      if (nearbyNPC) {
-        interactNPC(nearbyNPC);
-      }
+      if (nearbyNPC) interactNPC(nearbyNPC);
     }
 
     // ==================== DIALOGUE ====================
@@ -1488,7 +1495,6 @@
     function interactNPC(npcId) {
       const mission = MISSIONS.find(m => m.npc === npcId && !gameState.completedQuests.includes(m.id));
       if (!mission) {
-        // Already done
         alert(`${NPCS[npcId].name}：我们聊过了，有事再找我！`);
         return;
       }
@@ -1499,17 +1505,16 @@
       gameState.startTime = Date.now();
 
       const npc = NPCS[npcId];
+      const locations = { boss: '经理办公室', colleague: '工位区', hr: 'HR区域', client: '会议室', peer: '茶水间' };
+
       document.getElementById('dialogue-avatar').textContent = npc.avatar;
       document.getElementById('dialogue-name').textContent = npc.name;
       document.getElementById('dialogue-name').style.color = npc.color;
+      document.getElementById('dialogue-location').textContent = locations[npcId] || '';
       document.getElementById('dialogue-scene').textContent = `📋 任务：${mission.title}`;
       document.getElementById('dialogue-text').textContent = mission.dialogue;
       document.getElementById('dialogue-question').textContent = mission.question;
       document.getElementById('dialogue-input').value = '';
-
-      const locations = { boss: '经理办公室', colleague: '工位区', hr: 'HR区域', client: '会议室', peer: '茶水间' };
-      document.getElementById('dialogue-location').textContent = locations[npcId] || '';
-
       document.getElementById('dialogue-modal').style.display = 'flex';
       document.getElementById('dialogue-input').focus();
     }
@@ -1526,7 +1531,6 @@
         setTimeout(() => document.getElementById('dialogue-input').style.animation = '', 300);
         return;
       }
-
       const mission = MISSIONS[gameState.currentQuest];
       const result = analyzeAnswer(answer, mission);
       showResult(result, mission);
@@ -1534,28 +1538,13 @@
 
     function analyzeAnswer(answer, mission) {
       let matchCount = 0;
-      mission.goodKeywords.forEach(kw => {
-        if (answer.includes(kw)) matchCount++;
-      });
-
+      mission.goodKeywords.forEach(kw => { if (answer.includes(kw)) matchCount++; });
       let score = 30 + matchCount * 15;
-
-      const hasConclusion = ['因此', '建议', '我认为', '我的看法', '结论'].some(w => answer.includes(w));
-      const hasStructure = ['第一', '第二', '第三', '1.', '2.', '3.'].some(w => answer.includes(w));
-      const hasData = /[0-9]+/.test(answer);
-
-      if (hasConclusion) score += 15;
-      if (hasStructure) score += 10;
-      if (hasData) score += 10;
-
+      if (['因此', '建议', '我认为', '我的看法', '结论'].some(w => answer.includes(w))) score += 15;
+      if (['第一', '第二', '第三', '1.', '2.', '3.'].some(w => answer.includes(w))) score += 10;
+      if (/[0-9]+/.test(answer)) score += 10;
       score = Math.min(100, score);
-
-      let favorChange = 0;
-      if (score >= 80) favorChange = 10;
-      else if (score >= 60) favorChange = 5;
-      else if (score >= 40) favorChange = 0;
-      else favorChange = -5;
-
+      let favorChange = score >= 80 ? 10 : score >= 60 ? 5 : score >= 40 ? 0 : -5;
       return { score, favorChange };
     }
 
@@ -1564,11 +1553,8 @@
       document.getElementById('result-modal').style.display = 'flex';
 
       const npc = NPCS[mission.npc];
-
-      // Score
       document.getElementById('result-score').textContent = result.score;
 
-      // Grade
       let grade, gradeClass;
       if (result.score >= 90) { grade = 'S级 · 完美!'; gradeClass = 's'; playSound('success'); }
       else if (result.score >= 80) { grade = 'A级 · 优秀!'; gradeClass = 'a'; playSound('success'); }
@@ -1579,46 +1565,27 @@
       document.getElementById('result-grade').textContent = grade;
       document.getElementById('result-grade').className = 'result-grade ' + gradeClass;
 
-      // Exp
       let expGained = Math.round(result.score * 1.5);
       if (gameState.streak >= 3) expGained = Math.round(expGained * 1.5);
       document.getElementById('result-exp').textContent = '+' + expGained;
-
-      // Favor
       document.getElementById('result-favor').textContent = (result.favorChange >= 0 ? '+' : '') + result.favorChange;
       document.getElementById('result-favor').className = 'result-stat-value ' + (result.favorChange >= 0 ? 'positive' : 'negative');
+      document.getElementById('result-time').textContent = Math.round((Date.now() - gameState.startTime) / 1000) + '秒';
 
-      // Time
-      const timeTaken = Math.round((Date.now() - gameState.startTime) / 1000);
-      document.getElementById('result-time').textContent = timeTaken + '秒';
+      if (result.score >= 80) gameState.streak++; else gameState.streak = 0;
 
-      // Streak
-      if (result.score >= 80) {
-        gameState.streak++;
-      } else {
-        gameState.streak = 0;
-      }
-
-      // Achievement
       let achievement = '';
       if (gameState.completedQuests.length === 0) achievement = '初次冒险';
       else if (result.score >= 90) achievement = '完美表达';
       else if (gameState.streak >= 3) achievement = `🔥 ${gameState.streak}连击!`;
       document.getElementById('result-achievement').textContent = achievement;
 
-      // Feedback
       document.getElementById('result-avatar').textContent = npc.avatar;
-      let feedback = '';
-      if (result.score >= 80) {
-        feedback = npc.name === '严厉上司' ? '不错，继续保持。' : '很好！你的表达很清晰。';
-      } else if (result.score >= 60) {
-        feedback = '还行，下次注意结论先行。';
-      } else {
-        feedback = npc.name === '严厉上司' ? '太差了，回去重练。' : '没关系，多练习就好了。';
-      }
+      let feedback = result.score >= 80 ? (npc.name === '严厉上司' ? '不错，继续保持。' : '很好！你的表达很清晰。')
+                 : result.score >= 60 ? '还行，下次注意结论先行。'
+                 : (npc.name === '严厉上司' ? '太差了，回去重练。' : '没关系，多练习就好了。');
       document.getElementById('result-feedback').textContent = feedback;
 
-      // Update state
       const oldLevel = gameState.player.level;
       gameState.player.exp += expGained;
       gameState.npcFavorability[mission.npc] = Math.min(100, Math.max(0, gameState.npcFavorability[mission.npc] + result.favorChange));
@@ -1631,20 +1598,17 @@
     function closeResult() {
       document.getElementById('result-modal').style.display = 'none';
       gameState.dialogueActive = false;
-      positionNPCs();
       updateQuestList();
       updateUI();
     }
 
     function goToNextQuest() {
       closeResult();
-
-      const nextMission = MISSIONS.find(m => !gameState.completedQuests.includes(m.id));
-      if (nextMission) {
-        const pos = NPC_START_POS[nextMission.npc];
+      const next = MISSIONS.find(m => !gameState.completedQuests.includes(m.id));
+      if (next) {
+        const pos = NPC_POS[next.npc];
         gameState.player.x = pos.x;
-        gameState.player.y = pos.y + 12;
-        positionPlayer();
+        gameState.player.y = pos.y + 80;
       }
     }
 
@@ -1656,14 +1620,11 @@
           break;
         }
       }
-
       if (gameState.player.level > oldLevel) {
         playSound('levelup');
         document.getElementById('level-up-text').textContent = `恭喜你升到 Lv.${gameState.player.level}!`;
         document.getElementById('level-up-overlay').style.display = 'block';
-        setTimeout(() => {
-          document.getElementById('level-up-overlay').style.display = 'none';
-        }, 2500);
+        setTimeout(() => document.getElementById('level-up-overlay').style.display = 'none', 2500);
       }
     }
 
@@ -1679,46 +1640,41 @@
     function updateQuestList() {
       const container = document.getElementById('quest-list');
       container.innerHTML = '';
-
-      const showCount = 5;
       const start = Math.max(0, gameState.currentQuest - 2);
 
-      MISSIONS.slice(start, start + showCount).forEach((mission, i) => {
-        const actualIndex = start + i;
+      MISSIONS.slice(start, start + 5).forEach((mission, i) => {
+        const actual = start + i;
         const item = document.createElement('div');
         item.className = 'quest-item';
-
         if (gameState.completedQuests.includes(mission.id)) {
           item.classList.add('completed');
-          item.innerHTML = '<span class="quest-icon">✅</span> ' + mission.title;
-        } else if (actualIndex === gameState.currentQuest) {
+          item.innerHTML = `<span>✅</span> ${mission.title}`;
+        } else if (actual === gameState.currentQuest) {
           item.classList.add('current');
-          item.innerHTML = '<span class="quest-icon">🎯</span> ' + mission.title;
+          item.innerHTML = `<span>🎯</span> ${mission.title}`;
         } else {
-          item.innerHTML = '<span class="quest-icon">○</span> ' + mission.title;
+          item.innerHTML = `<span>○</span> ${mission.title}`;
         }
-
         container.appendChild(item);
       });
     }
 
-    // ==================== AVATAR SELECT ====================
-
-    document.querySelectorAll('.avatar-choice').forEach(choice => {
-      choice.addEventListener('click', () => {
-        document.querySelectorAll('.avatar-choice').forEach(c => c.classList.remove('selected'));
-        choice.classList.add('selected');
+    // Avatar select
+    document.querySelectorAll('.avatar-choice').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-choice').forEach(x => x.classList.remove('selected'));
+        c.classList.add('selected');
       });
     });
 
-    // ==================== INIT ====================
+    // NPC click handlers
+    Object.keys(NPC_POS).forEach(npcId => {
+      document.getElementById('npc-' + npcId)?.addEventListener('click', () => interactNPC(npcId));
+    });
 
     window.onload = function() {
-      if (loadGame()) {
-        document.getElementById('continue-btn').style.display = 'block';
-      }
+      if (loadGame()) document.getElementById('continue-btn').style.display = 'block';
     };
-
     document.getElementById('continue-btn').addEventListener('click', continueGame);
   </script>
 </body>
