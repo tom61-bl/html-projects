@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>生日快乐 ✨</title>
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Noto+Serif+TC:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'HMingTiJ';
-            src: url('https://cdn.jsdelivr.net/gh/udxjk/HMingTiJ@main/HMingTiJ-Regular.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/udxjk/HMingTiJ@main/HMingTiJ-Regular.woff') format('woff');
+            src: local('HMingTiJ'), local('HMingTiJ-Regular');
             font-weight: normal;
             font-style: normal;
         }
@@ -18,7 +17,7 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(145deg, #f8f4f0 0%, #f5efe8 25%, #f0e8df 50%, #ebe3da 75%, #e8dfd5 100%);
+            background: linear-gradient(135deg, #FF9966 0%, #FFB88C 20%, #FFCC99 35%, #E8D4C4 50%, #C9D6E3 65%, #8EAFC2 80%, #5B8FA8 100%);
             font-family: 'Noto Serif SC', serif;
             display: flex;
             align-items: center;
@@ -254,7 +253,7 @@
         .postcard-back {
             background: #faf7f2;
             transform: rotateY(180deg);
-            padding: 30px 25px 25px;
+            padding: 25px 20px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -351,7 +350,7 @@
         .to-label {
             position: relative;
             z-index: 2;
-            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-family: 'HMingTiJ', 'Ma Shan Zheng', cursive;
             font-size: 1.1rem;
             color: #5D4037;
             opacity: 0;
@@ -363,7 +362,7 @@
             position: relative;
             z-index: 2;
             text-align: right;
-            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-family: 'HMingTiJ', 'Ma Shan Zheng', cursive;
             font-size: 0.95rem;
             color: #6D4C41;
             opacity: 0;
@@ -382,27 +381,27 @@
         }
 
         .letter-title {
-            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
+            font-family: 'Playfair Display', 'Cormorant Garamond', 'Noto Serif SC', serif;
             font-size: 2rem;
+            font-weight: 600;
             color: #c9a86c;
             opacity: 0;
-            letter-spacing: 0.2em;
-            margin-bottom: 12px;
+            letter-spacing: 0.3em;
+            margin-bottom: 10px;
             text-align: center;
-            text-shadow: 0 1px 2px rgba(201, 168, 108, 0.3);
         }
 
         .letter-text {
-            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
-            font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+            font-family: 'HMingTiJ', 'Ma Shan Zheng', cursive;
+            font-size: clamp(0.8rem, 2.3vw, 1.05rem);
             color: #3E2723;
-            line-height: 1.7;
+            line-height: 1.6;
             text-align: center;
         }
 
         .letter-text .line {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .letter-title span, .letter-text .line span, .letter-date span {
@@ -424,20 +423,20 @@
             position: relative;
             z-index: 2;
             text-align: right;
-            font-family: 'HMingTiJ', 'Noto Serif TC', serif;
-            font-size: 1.1rem;
+            font-family: 'Playfair Display', 'Cormorant Garamond', 'Noto Serif SC', serif;
+            font-size: 0.9rem;
             color: #6D4C41;
             opacity: 0;
-            margin-top: 20px;
-            padding-right: 10px;
+            margin-top: 8px;
+            padding-right: 8px;
         }
 
         .ink-trail {
             position: absolute;
-            bottom: 12px; left: 50%;
+            bottom: 8px; left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: 6px;
             opacity: 0;
             z-index: 2;
         }
@@ -475,9 +474,9 @@
 
         .flip-hint {
             position: absolute;
-            bottom: 50px; left: 50%;
+            bottom: 35px; left: 50%;
             transform: translateX(-50%);
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: rgba(139, 90, 43, 0.5);
             opacity: 0;
             z-index: 2;
@@ -546,23 +545,23 @@
                 border-width: 1.5px;
             }
             .letter-title {
-                font-size: 1.6rem;
-                margin-bottom: 10px;
-            }
-            .letter-text {
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-            .letter-text .line {
-                margin-bottom: 4px;
-            }
-            .to-label {
-                font-size: 1rem;
+                font-size: 1.5rem;
                 margin-bottom: 6px;
             }
-            .letter-date {
+            .letter-text {
                 font-size: 0.85rem;
-                margin-top: 10px;
+                line-height: 1.5;
+            }
+            .letter-text .line {
+                margin-bottom: 3px;
+            }
+            .to-label {
+                font-size: 0.95rem;
+                margin-bottom: 5px;
+            }
+            .letter-date {
+                font-size: 0.8rem;
+                margin-top: 6px;
             }
             .postcard-front-hint { font-size: 0.65rem; padding: 5px 10px; bottom: 10px; right: 10px; }
             .stamp-decoration {
@@ -573,32 +572,33 @@
                 right: 10px;
             }
             .stamp-decoration::after { font-size: 0.4rem; }
-            .divider { left: 18px; top: 60px; }
+            .divider { left: 16px; top: 55px; }
             .to-label { padding-left: 5px; }
             .letter-content { padding-left: 8px; }
             .hint { bottom: 20px; font-size: 0.8rem; }
             .petal { font-size: 1.3rem; }
-            .flip-hint { bottom: 35px; font-size: 0.6rem; }
+            .flip-hint { bottom: 30px; font-size: 0.55rem; }
             .corner-decor { font-size: 0.8rem; }
+            .ink-trail { bottom: 6px; }
         }
 
         @media (max-width: 380px) {
             .postcard-back {
-                padding: 15px 12px 12px;
+                padding: 12px 10px 10px;
             }
             .postcard-back-frame {
                 top: 6px; left: 6px; right: 6px; bottom: 6px;
             }
             .letter-title {
-                font-size: 1.4rem;
-                margin-bottom: 8px;
+                font-size: 1.3rem;
+                margin-bottom: 5px;
             }
             .letter-text {
-                font-size: 0.85rem;
-                line-height: 1.5;
+                font-size: 0.78rem;
+                line-height: 1.45;
             }
             .letter-text .line {
-                margin-bottom: 3px;
+                margin-bottom: 2px;
             }
             .stamp-decoration {
                 width: 38px;
